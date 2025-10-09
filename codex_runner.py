@@ -71,6 +71,10 @@ def print_current_time():
     current_time = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
     console.print(f"[blue]Current UTC Time:[/blue] {current_time}")
 
+# === Say Hello Function ===
+def say_hello():
+    print('Hello, CodexDaemon!')
+
 # === Ask OpenAI ===
 def ask_model(prompt, context):
     system = (
