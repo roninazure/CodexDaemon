@@ -12,6 +12,7 @@ Usage Examples:
     python3 codex_runner.py "add a function to fetch weather from OpenWeather API"
     python3 codex_runner.py "improve error handling in codex_runner.py" --commit
     python3 codex_runner.py --health
+    python3 codex_runner.py --time
 """
 
 import os, sys, argparse
