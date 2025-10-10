@@ -25,12 +25,11 @@ from openai import OpenAI
 
 console = Console()
 
-# === Load local .env ===
 env_path = Path(__file__).resolve().parent / ".env"
-if not env_path.exists():
-    console.print(f"[red]ERROR: .env file not found at {env_path}[/red]")
-    sys.exit(1)
-load_dotenv(dotenv_path=env_path)
+if env_path.exists():
+    load_dotenv(dotenv_path=env_path)
+else:
+    console.print("[yellow]⚠️ .env not found — using GitHub Secrets environment instead.[/yellow]")
 
 # === Environment variables ===
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
