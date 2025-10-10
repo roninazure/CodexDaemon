@@ -3,6 +3,7 @@ name: 🧠 CodexDaemon Auto-Review
 on:
   push:
     branches: [ main ]
+  workflow_dispatch:  # allow manual trigger too
 
 jobs:
   review:
@@ -20,14 +21,16 @@ jobs:
       - name: 🧱 Install dependencies
         run: |
           pip install -r requirements.txt
+          pip install openai gitpython python-dotenv rich
 
-      - name: 🤖 Run CodexDaemon review
+      - name: 🚀 Run CodexDaemon Review
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           GIT_AUTHOR_NAME: ${{ secrets.GIT_AUTHOR_NAME }}
           GIT_AUTHOR_EMAIL: ${{ secrets.GIT_AUTHOR_EMAIL }}
           CODEX_MODEL: ${{ secrets.CODEX_MODEL }}
         run: |
+          echo "Running CodexDaemon self-analysis..."
           python3 codex_runner.py "analyze codex_runner.py and suggest clarity improvements" --commit
 
       - name: 📤 Push review results
@@ -36,4 +39,4 @@ jobs:
           git config user.email "bot@codexdaemon.local"
           git add .
           git commit -m "🤖 CodexDaemon auto-review" || echo "No changes to commit"
-          git push
+          git push origin main || echo "Push skipped"
