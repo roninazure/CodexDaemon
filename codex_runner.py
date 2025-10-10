@@ -1,20 +1,26 @@
+```python
 #!/usr/bin/env python3
 """
 CodexDaemon Runner
 ------------------
-Local version of the Codex AI automation runner.
+Local + GitHub Actions–safe automation runner.
 
-This script connects to OpenAI via your .env configuration to perform code edits,
-generate functions, and push changes directly to your CodexDaemon repository.
+This script connects to OpenAI via your .env configuration or GitHub Secrets
+to perform AI-driven code edits, generate functions, and push changes directly
+to your CodexDaemon repository.
 
 Usage Examples:
     python3 codex_runner.py "add a function to fetch weather from OpenWeather API"
     python3 codex_runner.py "improve error handling in codex_runner.py" --commit
     python3 codex_runner.py --health
     python3 codex_runner.py --time
+    python3 codex_runner.py --sanitize
 """
 
-import os, sys, re, argparse
+import os
+import sys
+import re
+import argparse
 from pathlib import Path
 from datetime import datetime
 from rich.console import Console
@@ -24,14 +30,13 @@ from openai import OpenAI
 
 console = Console()
 
-# === Load environment ===
+# === Load environment (.env or GitHub secrets) ===
 env_path = Path(__file__).resolve().parent / ".env"
 if env_path.exists():
     load_dotenv(dotenv_path=env_path)
 else:
     console.print("[yellow]⚠️ .env not found — using GitHub Secrets environment instead.[/yellow]")
 
-# === Environment variables ===
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 PROJECT_DIR = Path(os.getenv("PROJECT_DIR", Path(__file__).resolve().parent)).resolve()
 MODEL = os.getenv("CODEX_MODEL", "gpt-4o-mini")
@@ -73,9 +78,17 @@ def print_current_time():
 def say_hello():
     print('Hello, CodexDaemon!')
 
-# === Say Hi Function ===
-def say_hi():
-    print('Hi from CodexDaemon!')
+# === Sanitizer ===
+def sanitize_file(file_path: Path):
+    """Remove stray markdown fences or junk injected by AI."""
+    if not file_path.exists():
+        return
+    text = file_path.read_text(encoding="utf-8", errors="ignore")
+    clean = re.sub(r"[\w]*\n?", "", text)
+    clean = clean.strip() + "\n"
+    if text != clean:
+        file_path.write_text(clean, encoding="utf-8")
+        console.print(f"[yellow]🧹 Sanitized:[/yellow] {file_path}")
 
 # === Ask OpenAI ===
 def ask_model(prompt, context):
@@ -128,6 +141,7 @@ def main():
     ap.add_argument("--commit", action="store_true", help="Commit and push changes")
     ap.add_argument("--health", action="store_true", help="Run environment health check")
     ap.add_argument("--time", action="store_true", help="Print current UTC time")
+    ap.add_argument("--sanitize", action="store_true", help="Sanitize files manually")
     args = ap.parse_args()
 
     if args.health:
@@ -138,13 +152,18 @@ def main():
         print_current_time()
         sys.exit(0)
 
+    if args.sanitize:
+        for f in PROJECT_DIR.glob("*.py"):
+            sanitize_file(f)
+        sys.exit(0)
+
     if not args.instruction:
         console.print("[red]No instruction provided[/red]")
         sys.exit(1)
 
     repo = get_repo()
 
-    # === Detect target file ===
+    # === Improved file detection ===
     match = re.search(r"\b[\w\-/]+\.(?:py|md|yml|yaml|txt)\b", args.instruction)
     if match:
         target_path = (PROJECT_DIR / match.group(0)).resolve()
@@ -153,8 +172,11 @@ def main():
         target_path = (PROJECT_DIR / "codex_runner.py").resolve()
 
     if not target_path.exists():
-        console.print(f"[red]Target file not found:[/red] {target_path}")
+        console.print(f"[red]Target file not found: {target_path}[/red]")
         sys.exit(1)
+
+    # 🧹 Always sanitize before editing
+    sanitize_file(target_path)
 
     context = target_path.read_text(encoding="utf-8", errors="ignore")
     console.print(f"[cyan]Editing:[/cyan] {target_path.relative_to(PROJECT_DIR)}")
@@ -167,3 +189,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+```
