@@ -1,9 +1,9 @@
-name: 🧹 CodexDaemon Pre-Flight Sanitizer
+name: 🧹 CodexDaemon Pre-Flight Sanitizer + Auto-Review Chain
 
 on:
   push:
     branches: [ main ]
-  workflow_dispatch:  # allow manual run
+  workflow_dispatch:
 
 jobs:
   sanitize:
@@ -35,3 +35,17 @@ jobs:
           git add .
           git commit -m "🧹 Auto-sanitized repo before build" || echo "No changes to commit"
           git push || echo "No remote push needed"
+
+  trigger-review:
+    needs: sanitize
+    runs-on: ubuntu-latest
+    if: ${{ success() }}
+
+    steps:
+      - name: ⚡ Trigger CodexDaemon Auto-Review
+        uses: peter-evans/workflow-dispatch@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          repository: roninazure/CodexDaemon
+          workflow: on-push-codex.yml
+          ref: main
