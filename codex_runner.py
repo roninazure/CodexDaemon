@@ -1,3 +1,4 @@
+```python
 #!/usr/bin/env python3
 """
 CodexDaemon Runner
@@ -14,17 +15,17 @@ Usage Examples:
     python3 codex_runner.py --time
 """
 
-import os, sys, argparse
+import os, sys, re, argparse
 from pathlib import Path
 from datetime import datetime
 from rich.console import Console
-from rich.markdown import Markdown
 from git import Repo, Actor
 from dotenv import load_dotenv
 from openai import OpenAI
 
 console = Console()
 
+# === Load environment ===
 env_path = Path(__file__).resolve().parent / ".env"
 if env_path.exists():
     load_dotenv(dotenv_path=env_path)
@@ -37,7 +38,7 @@ PROJECT_DIR = Path(os.getenv("PROJECT_DIR", Path(__file__).resolve().parent)).re
 MODEL = os.getenv("CODEX_MODEL", "gpt-4o-mini")
 
 if not OPENAI_API_KEY:
-    console.print("[red]ERROR: OPENAI_API_KEY not set in .env[/red]")
+    console.print("[red]ERROR: OPENAI_API_KEY not set in .env or environment[/red]")
     sys.exit(1)
 
 client = OpenAI(api_key=OPENAI_API_KEY)
@@ -72,6 +73,10 @@ def print_current_time():
 # === Say Hello Function ===
 def say_hello():
     print('Hello, CodexDaemon!')
+
+# === Say Hi Function ===
+def say_hi():
+    print('Hi from CodexDaemon!')
 
 # === Ask OpenAI ===
 def ask_model(prompt, context):
@@ -139,11 +144,17 @@ def main():
         sys.exit(1)
 
     repo = get_repo()
-    target_hint = args.instruction.split()[-1]
-    target_path = (PROJECT_DIR / target_hint).resolve() if target_hint.endswith(".py") else None
 
-    if not target_path or not target_path.exists():
-        console.print(f"[red]Target file not found: {target_hint}[/red]")
+    # === Detect target file ===
+    match = re.search(r"\b[\w\-/]+\.(?:py|md|yml|yaml|txt)\b", args.instruction)
+    if match:
+        target_path = (PROJECT_DIR / match.group(0)).resolve()
+    else:
+        console.print("[yellow]No explicit file mentioned — defaulting to codex_runner.py[/yellow]")
+        target_path = (PROJECT_DIR / "codex_runner.py").resolve()
+
+    if not target_path.exists():
+        console.print(f"[red]Target file not found:[/red] {target_path}")
         sys.exit(1)
 
     context = target_path.read_text(encoding="utf-8", errors="ignore")
@@ -157,3 +168,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+```
