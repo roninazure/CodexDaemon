@@ -1,0 +1,37 @@
+name: 🧹 CodexDaemon Pre-Flight Sanitizer
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:  # allow manual run
+
+jobs:
+  sanitize:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🧩 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🧰 Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: 🧱 Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: 🧹 Run CodexDaemon sanitizer
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          echo "🚿 Cleaning Python files..."
+          python3 codex_runner.py --sanitize
+
+      - name: 📤 Commit and push sanitized files
+        run: |
+          git config user.name "CodexDaemon Bot"
+          git config user.email "bot@codexdaemon.local"
+          git add .
+          git commit -m "🧹 Auto-sanitized repo before build" || echo "No changes to commit"
+          git push || echo "No remote push needed"
