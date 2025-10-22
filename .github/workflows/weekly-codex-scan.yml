@@ -30,8 +30,7 @@ jobs:
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
-          python .github/scripts/codexdaemon_scan.py
-
+      python ./CodexDaemon/.github/scripts/codexdaemon_scan.py || python .github/scripts/codexdaemon_scan.py
       - name: Commit weekly scan log and reflection
         run: |
           git config --global user.name "github-actions[bot]"
