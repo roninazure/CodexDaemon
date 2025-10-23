@@ -1,4 +1,4 @@
-usr/bin/env python3
+#!/usr/bin/env python3
 """
 codexdaemon_scan.py — Phase 8.6 “Finalized Neural Sync + Reflection Formatting Fix”
 
@@ -103,7 +103,7 @@ def update_neural_sync_badge():
         txt = txt.replace("</h1>", f"</h1>\n{badge_html}")
 
     readme.write_text(txt, encoding="utf-8")
-    log(f"[OK] Neural Sync badge updated — GitHub-safe Twemoji rendered.")A
+    log(f"[OK] Neural Sync badge updated — GitHub-safe Twemoji rendered.")
 
     # 🧠 outside the badge; HTML-safe and center aligned
     badge_html = (
