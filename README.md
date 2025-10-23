@@ -1,39 +1,22 @@
-<p align="center">
-  <img src="https://img.shields.io/badge/🤖%20CodexDaemon-Self%20Evolving%20Code%20Runner-blueviolet?style=for-the-badge" alt="CodexDaemon Badge"/>
-</p>
-<p align="center">
-  <p align="center">
-  <img src="https://img.shields.io/badge/🧠_Last_Neural_Sync-2025-10-23T02:10Z-purple?style=for-the-badge&labelColor=1a1a1a&color=7e22ce" alt="Last Neural Sync"/>
-</p>
-</p>
 
 
-<h1 align="center">🧠 CodexDaemon</h1>
 
-🧠 **Last Neural Sync:** ![](https://img.shields.io/badge/2025-10-23T03%3A24Z-purple?style=for-the-badge&label=Last%20Sync)
+# 🧠 CodexDaemon
 
-<p align="center"><img src="https://raw.githubusercontent.com/twitter/twemoji/v14.0.2/assets/72x72/1f9e0.png" width="20" height="20" style="vertical-align:-3px;margin-right:6px;"><img src="https://img.shields.io/badge/Last_Neural_Sync-2025-10-23T03:13Z-7e22ce?style=for-the-badge&labelColor=1a1a1a" alt="Last Neural Sync"/></p>
-<p align="center">
-  <img src="https://img.shields.io/badge/%F0%9F%A7%A0%20Last_Neural_Sync-2025--10--23T00%3A34Z-purple?style=for-the-badge&labelColor=1a1a1a&color=7e22ce" alt="Last Neural Sync"/>
-</p>
-<p align="center">
+![Last Neural Sync](https://img.shields.io/badge/Last%20Neural%20Sync-2025--10--23T00:34Z-purple?style=for-the-badge)
+
+**The AI-Driven Codebase That Codes Itself**
+
   <strong>The AI-Driven Codebase That Codes Itself</strong>  
-</p>
 
-<p align="center">
   <a href="https://github.com/roninazure/CodexDaemon/actions">
-    <img src="https://img.shields.io/github/actions/workflow/status/roninazure/CodexDaemon/on-push-codex.yml?label=Auto-Review&logo=github&style=flat-square" alt="Auto Review Status"/>
   </a>
   <a href="#">
-    <img src="https://img.shields.io/badge/OpenAI-GPT--4o-success?logo=openai&style=flat-square" alt="OpenAI GPT-4o"/>
   </a>
   <a href="#">
-    <img src="https://img.shields.io/badge/Mode-Lab%20%7C%20CI%20%7C%20Self--Healing-ff69b4?style=flat-square" alt="Modes"/>
   </a>
   <a href="#">
-    <img src="https://img.shields.io/badge/Last%20Run-Auto%20Refactor%20✓-brightgreen?style=flat-square" alt="Last Run"/>
   </a>
-</p>
 
 ---
 
