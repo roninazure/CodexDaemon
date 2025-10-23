@@ -4,7 +4,7 @@
 
 <h1 align="center">🧠 CodexDaemon</h1>
 <p align="center">
-  <img src="https://img.shields.io/badge/🧠_Last_Neural_Sync-2025-10-23T00:34Z-purple?style=for-the-badge&labelColor=1a1a1a&color=7e22ce" alt="Last Neural Sync"/>
+  <img src="https://img.shields.io/badge/%F0%9F%A7%A0%20Last_Neural_Sync-2025--10--23T00%3A34Z-purple?style=for-the-badge&labelColor=1a1a1a&color=7e22ce" alt="Last Neural Sync"/>
 </p>
 <p align="center">
   <strong>The AI-Driven Codebase That Codes Itself</strong>  
