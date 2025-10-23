@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+usr/bin/env python3
 """
 codexdaemon_scan.py — Phase 8.6 “Finalized Neural Sync + Reflection Formatting Fix”
 
@@ -78,24 +78,23 @@ def summarize_file(path: Path):
 # Neural Sync Badge (fixed)
 # ---------------------------------------------------------------------
 def update_neural_sync_badge():
-    """Insert or update the 🧠 Neural Sync badge in README.md (GitHub-safe)."""
+    """GitHub-safe Neural Sync badge (no ? mark issue)."""
     readme = REPO_ROOT / "README.md"
     now = datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%MZ")
 
-    # ✅ Plain HTML that GitHub Markdown allows
-    badge_html = (
-        f'<p align="center">\n'
-        f'  🧠 <img src="https://img.shields.io/badge/Last%20Neural%20Sync-'
-        f'{now}-7e22ce?style=for-the-badge&labelColor=1a1a1a" alt="Last Neural Sync"/>\n'
-        f'</p>\n'
-    )
+    badge_html = f"""
+<p align="center">
+  <img src="https://github.githubassets.com/images/icons/emoji/unicode/1f9e0.png" width="32" height="32" alt="🧠"/><br/>
+  <img src="https://img.shields.io/badge/Last%20Neural%20Sync-{now}-7e22ce?style=for-the-badge&labelColor=1a1a1a" alt="Last Neural Sync"/>
+</p>
+"""
 
     txt = readme.read_text(encoding="utf-8")
 
     if "Last Neural Sync" in txt:
         import re
         txt = re.sub(
-            r'<p align="center">[\s\S]+?</p>',
+            r"<p align=\"center\">[\s\S]+?</p>",
             badge_html.strip(),
             txt,
             count=1,
@@ -104,7 +103,7 @@ def update_neural_sync_badge():
         txt = txt.replace("</h1>", f"</h1>\n{badge_html}")
 
     readme.write_text(txt, encoding="utf-8")
-    log(f"[OK] Neural Sync badge updated in {readme}")
+    log(f"[OK] Neural Sync badge updated — GitHub-safe Twemoji rendered.")A
 
     # 🧠 outside the badge; HTML-safe and center aligned
     badge_html = (
