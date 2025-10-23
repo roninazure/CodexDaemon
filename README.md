@@ -7,15 +7,10 @@
 
 **The AI-Driven Codebase That Codes Itself**
 
-  <strong>The AI-Driven Codebase That Codes Itself</strong>  
 
-  <a href="https://github.com/roninazure/CodexDaemon/actions">
   </a>
-  <a href="#">
   </a>
-  <a href="#">
   </a>
-  <a href="#">
   </a>
 
 ---
