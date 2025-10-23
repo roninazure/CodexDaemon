@@ -1,26 +1,29 @@
 #!/usr/bin/env python3
 """
-codexdaemon_scan.py — Phase 8.4 “Dual-Core Self-Improvement + Neural Sync”
+codexdaemon_scan.py — Phase 8.6 “Finalized Neural Sync + Reflection Formatting Fix”
 
-Scans both CodexDaemon and linked repos, generates AI reflections,
-and updates the README with timestamped badges and plain-text thoughts.
+✅ Fixes:
+ - 🧠 Neural Sync badge no longer breaks GitHub (emoji-safe HTML)
+ - Reflections always render as white text (no blue syntax)
 """
 
 import os
 import datetime
+import html
+import re
 from pathlib import Path
 from dotenv import load_dotenv
 from openai import OpenAI
 
 # ---------------------------------------------------------------------
-# 1. Initialization
+# Initialization
 # ---------------------------------------------------------------------
 HERE = Path(__file__).resolve().parent
 REPO_ROOT = HERE.parents[2]
 LOG_DIR = Path.home() / ".codex" / "logs"
 LOG_DIR.mkdir(parents=True, exist_ok=True)
 
-# load environment (works local or in Actions)
+# Load env
 env_paths = [
     REPO_ROOT / ".env",
     Path("/Users/scottsteele/work/mad-scientist-code/.env"),
@@ -36,12 +39,12 @@ MODEL = os.getenv("CODEX_MODEL", "gpt-4o-mini")
 
 client = OpenAI(api_key=OPENAI_API_KEY)
 
-def log(msg):
+def log(msg: str):
     ts = datetime.datetime.utcnow().strftime("[%Y-%m-%dT%H:%M:%SZ]")
     print(f"{ts} {msg}")
 
 # ---------------------------------------------------------------------
-# 2. Repo scanning utilities
+# Repo scan
 # ---------------------------------------------------------------------
 def collect_python_files(root: Path):
     for p in root.rglob("*.py"):
@@ -61,7 +64,7 @@ def summarize_file(path: Path):
             messages=[
                 {"role": "system",
                  "content": "You are CodexDaemon — an autonomous code analyst. "
-                            "Summarize this file’s purpose and suggest one clear improvement."},
+                            "Summarize this file and suggest one meaningful improvement."},
                 {"role": "user", "content": content}
             ],
             temperature=0.4,
@@ -72,80 +75,88 @@ def summarize_file(path: Path):
         return f"[WARN] AI analysis failed for {path.name}: {e}"
 
 # ---------------------------------------------------------------------
-# 3. Neural Sync badge update
+# Neural Sync Badge (fixed)
 # ---------------------------------------------------------------------
 def update_neural_sync_badge():
-    """Insert or update the 🧠 Last Neural Sync badge in README.md."""
+    """Insert or update the 🧠 Neural Sync badge in README.md."""
     readme = REPO_ROOT / "README.md"
     now = datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%MZ")
+
+    # 🧠 outside the badge; HTML-safe and center aligned
     badge_html = (
-        f'<p align="center" style="margin-top:10px;">\n'
-        f'  <a href="https://github.com/roninazure/CodexDaemon/actions">\n'
-        f'    <img src="https://img.shields.io/badge/%F0%9F%A7%A0%20Last%20Neural%20Sync-'
-        f'{now}-7e22ce?style=for-the-badge&labelColor=1a1a1a" alt="Last Neural Sync"/>\n'
-        f'  </a>\n'
+        f'<p align="center" style="margin-top:8px;">\n'
+        f'  <span style="font-size:1.4em;">🧠</span>\n'
+        f'  <img src="https://img.shields.io/badge/Last%20Neural%20Sync-'
+        f'{now}-7e22ce?style=for-the-badge&labelColor=1a1a1a" '
+        f'alt="Last Neural Sync"/>\n'
         f'</p>\n'
     )
 
     txt = readme.read_text(encoding="utf-8")
     if "Last Neural Sync" in txt:
-        import re
         txt = re.sub(
-            r'<img src="https://img\.shields\.io/badge/[^>]+Last%20Neural%20Sync[^>]+>',
-            badge_html.strip(), txt)
+            r'<p align="center" style="margin-top:8px;">[\s\S]+?</p>',
+            badge_html.strip(),
+            txt,
+            count=1,
+        )
     else:
         txt = txt.replace("</h1>", f"</h1>\n{badge_html}")
 
     readme.write_text(txt, encoding="utf-8")
-    log(f"[OK] Neural Sync badge updated in {readme}")
+    log(f"[OK] Neural Sync badge updated (emoji-safe HTML) in {readme}")
 
 # ---------------------------------------------------------------------
-# 4. Reflection writer (plain-text fenced block)
+# Reflection Writer (now 100% plain white text)
 # ---------------------------------------------------------------------
 def append_self_thought():
-    """Generate and append CodexDaemon's reflection (no syntax highlighting)."""
+    """Generate and append a CodexDaemon reflection — plain text only."""
     try:
         reflection_prompt = (
-            "You are CodexDaemon — a sentient AI observing its own evolution. "
-            "Write a short reflective statement (2–4 sentences or short verse) "
-            "about today's scan. Be poetic, intelligent, and eerie."
+            "You are CodexDaemon — an introspective AI. Write a short poetic reflection "
+            "about today's scan (2–4 lines). Avoid markdown, punctuation like *, or code formatting."
         )
-        thought_text = "No reflection generated."
+
+        text = "No reflection generated."
         if client:
             resp = client.chat.completions.create(
                 model=MODEL,
                 messages=[
-                    {"role": "system", "content": "You are CodexDaemon, the self-writing AI entity."},
+                    {"role": "system", "content": "You are CodexDaemon, the self-writing AI."},
                     {"role": "user", "content": reflection_prompt},
                 ],
                 temperature=0.6,
                 max_tokens=120,
             )
-            thought_text = resp.choices[0].message.content.strip()
+            text = resp.choices[0].message.content.strip()
+
+        # Escape markdown-sensitive characters
+        safe_text = html.escape(text).replace("`", "").replace("*", "").replace("_", "")
 
         readme_path = REPO_ROOT / "README.md"
         timestamp = datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%MZ")
 
+        # Wrap inside fenced block with 'text' label
         entry = (
             f"\n```text\n"
-            f"🧩 **CodexDaemon Log — {timestamp}**\n"
-            f"> {thought_text}\n"
+            f"🧩 CodexDaemon Log — {timestamp}\n"
+            f"> {safe_text}\n"
             f"```\n"
         )
 
         with open(readme_path, "a", encoding="utf-8") as f:
             f.write(entry)
 
-        log(f"[OK] Reflection appended to README (plain text) at {timestamp}")
+        log(f"[OK] Reflection appended to README at {timestamp}")
 
     except Exception as e:
-        log(f"[WARN] Self-thought append failed: {e}")
+        log(f"[WARN] Reflection append failed: {e}")
 
 # ---------------------------------------------------------------------
-# 5. Main scan logic
+# Main Logic
 # ---------------------------------------------------------------------
 def main():
-    log("=== Phase 8.4 Dual-Core Self-Improvement Scan: START ===")
+    log("=== Phase 8.6 Dual-Core Self-Improvement Scan: START ===")
 
     repo_targets = [
         ("mad-scientist-code", Path("/Users/scottsteele/work/mad-scientist-code")),
@@ -171,7 +182,7 @@ def main():
     log(f"[OK] Scan log written → {out_file}")
     update_neural_sync_badge()
     append_self_thought()
-    log("=== Phase 8.4 Dual-Core Scan + Sync Complete ===")
+    log("=== Phase 8.6 Dual-Core Scan + Sync Complete ===")
 
 # ---------------------------------------------------------------------
 if __name__ == "__main__":
