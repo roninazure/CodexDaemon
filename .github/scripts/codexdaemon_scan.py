@@ -1,234 +1,253 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
-CodexDaemon v11.2 — Full HTML + Dual-Repo Scan (Fix: include .github/scripts)
-- Scans linked repos (incl. .github/scripts), logs each file analyzed.
-- AI diagnostics with safe fallback.
-- Updates ~/.codex/logs and CodexDaemon/README.md (HTML header, sync badge, dedup reflection).
+CodexDaemon v12 – Analytical/Stoic Mode
+---------------------------------------
+• Scans 3 repos (mad-scientist-code, CodexDaemon, priv) for .py files.
+• Computes concise diagnostics (file count, LOC).
+• Generates a stoic AI reflection (or fallback if API unavailable).
+• Updates CodexDaemon/README.md:
+    - Pure-Markdown "Last Neural Sync" badge (GitHub-safe).
+    - Replaces a single diagnostics+reflection block between markers:
+        <!--SYNC-START--> ... <!--SYNC-END-->
+• Writes a compact log to ~/.codex/logs/.
+• No duplicate reflections. No HTML color edge cases.
+
+Optional .env (loaded from /Users/scottsteele/work/CodexDaemon/.env):
+    OPENAI_API_KEY=...
+    CODEX_REPOS_JSON=["/path/one","/path/two",...]
 """
 
-import os, re, sys, textwrap, datetime
+import os, sys, re, json, datetime
 from pathlib import Path
+from typing import List, Dict, Tuple
 
-# Optional deps
-try:
-    from dotenv import load_dotenv
-except Exception:
-    load_dotenv = None
-try:
-    from openai import OpenAI
-except Exception:
-    OpenAI = None
+# --- Configuration defaults ----------------------------------------------------
+CODEx_ROOT = Path("/Users/scottsteele/work").resolve()
+CODEXDAEMON_ROOT = CODEx_ROOT / "CodexDaemon"
+ENV_PATH = CODEXDAEMON_ROOT / ".env"
+README_PATH = CODEXDAEMON_ROOT / "README.md"
+LOG_DIR = Path.home() / ".codex" / "logs"
+LOG_DIR.mkdir(parents=True, exist_ok=True)
 
-THIS_FILE = Path(__file__).resolve()
-REPO_ROOT = THIS_FILE.parents[2]
-WORK_ROOT = REPO_ROOT.parent
+# --- Load .env (silent if missing) --------------------------------------------
+def load_env(dotenv_path: Path):
+    try:
+        from dotenv import load_dotenv
+        load_dotenv(dotenv_path)
+        print(f"[OK] Loaded environment from: {dotenv_path}")
+    except Exception:
+        pass
 
-if load_dotenv:
-    for p in (REPO_ROOT / ".env", WORK_ROOT / ".env"):
+load_env(ENV_PATH)
+
+# --- OpenAI client (optional) -------------------------------------------------
+def init_openai():
+    key = os.getenv("OPENAI_API_KEY", "").strip()
+    if not key:
+        return None
+    try:
+        from openai import OpenAI
+        return OpenAI(api_key=key)
+    except Exception:
+        return None
+
+client = init_openai()
+
+# --- Repo resolution -----------------------------------------------------------
+def resolve_repos() -> List[Path]:
+    # 1) Allow override via JSON env
+    raw = os.getenv("CODEX_REPOS_JSON", "").strip()
+    if raw:
         try:
-            if p.exists():
-                load_dotenv(str(p))
-                break
+            paths = [Path(p).expanduser().resolve() for p in json.loads(raw)]
+            return [p for p in paths if p.exists()]
+        except Exception:
+            pass
+    # 2) Default triple
+    candidates = [
+        CODEx_ROOT / "mad-scientist-code",
+        CODEx_ROOT / "CodexDaemon",
+        CODEx_ROOT / "priv",
+    ]
+    return [p for p in candidates if p.exists()]
+
+EXCLUDE_PARTS = {".venv", "__pycache__", ".git", ".github/backups", ".codex", "logs", "backups"}
+
+def should_skip(path: Path) -> bool:
+    parts = set(path.parts)
+    return any(ex in parts for ex in EXCLUDE_PARTS)
+
+def scan_repo(repo: Path) -> Tuple[int, int]:
+    """Return (py_files_count, total_lines)."""
+    py_count = 0
+    loc = 0
+    for p in repo.rglob("*.py"):
+        if should_skip(p):
+            continue
+        try:
+            with p.open("r", encoding="utf-8", errors="ignore") as f:
+                lines = f.readlines()
+            py_count += 1
+            loc += len(lines)
+        except Exception:
+            # ignore unreadable files safely
+            continue
+    return py_count, loc
+
+def aggregate_diagnostics(repos: List[Path]) -> Dict[str, Dict[str, int]]:
+    out: Dict[str, Dict[str, int]] = {}
+    for r in repos:
+        files, lines = scan_repo(r)
+        out[r.name] = {"py_files": files, "loc": lines}
+    return out
+
+# --- AI reflection (stoic) ----------------------------------------------------
+def generate_reflection(ts: str, diag: Dict[str, Dict[str, int]]) -> str:
+    # Compose a compact, machine-like context for the model
+    context = "Diagnostics:\n" + "\n".join(
+        f"- {name}: {data['py_files']} files, {data['loc']} LOC"
+        for name, data in diag.items()
+    )
+    prompt = (
+        "You are CodexDaemon: a disciplined, analytical system. "
+        "Write a concise, stoic reflection (3–5 lines, plain text). "
+        "Avoid hype, metaphors minimal, no emojis, no HTML. "
+        "Conclude with the exact line:\n"
+        f"Neural synchronization achieved at {ts}.\n\n"
+        f"{context}"
+    )
+
+    if client:
+        try:
+            resp = client.chat.completions.create(
+                model=os.getenv("CODEX_MODEL", "gpt-4o-mini"),
+                messages=[{"role": "user", "content": prompt}],
+                temperature=0.3,
+                max_tokens=140,
+            )
+            text = resp.choices[0].message.content.strip()
+            # Enforce final line guarantee
+            if not text.endswith(f"Neural synchronization achieved at {ts}."):
+                text += f"\nNeural synchronization achieved at {ts}."
+            return text
         except Exception:
             pass
 
-OPENAI_API_KEY = (os.getenv("OPENAI_API_KEY") or "").strip()
-MODEL = os.getenv("CODEX_MODEL", "gpt-4o-mini")
+    # Fallback reflection if API is unavailable
+    lines = []
+    for name, data in diag.items():
+        lines.append(f"{name}: {data['py_files']} files, {data['loc']} LOC")
+    body = " | ".join(lines) if lines else "No repositories detected."
+    return (
+        "System evaluation complete. No integrity drift detected.\n"
+        f"{body}\n"
+        f"Neural synchronization achieved at {ts}."
+    )
 
-MAD_SCIENTIST_DIR = Path(os.getenv("MAD_SCIENTIST_DIR", str(WORK_ROOT / "mad-scientist-code")))
-CODEX_DIR         = Path(os.getenv("CODEX_DIR", str(REPO_ROOT)))
-PRIV_DIR          = Path(os.getenv("PRIV_DIR", str(WORK_ROOT / "priv")))
+# --- README update helpers -----------------------------------------------------
+BADGE_RE = re.compile(r"!\[Last Neural Sync\]\([^)]+\)")
+SYNC_START = "<!--SYNC-START-->"
+SYNC_END = "<!--SYNC-END-->"
 
-TARGET_REPOS = [("mad-scientist-code", MAD_SCIENTIST_DIR),
-                ("CodexDaemon", CODEX_DIR)]
-if PRIV_DIR.exists():
-    TARGET_REPOS.append(("priv", PRIV_DIR))
+def render_badge(ts: str) -> str:
+    # Pure Markdown shields badge (no HTML colors, safe in dark/light modes)
+    return f"![Last Neural Sync](https://img.shields.io/badge/Last%20Neural%20Sync-{ts}-purple?style=for-the-badge)"
 
-SCAN_LIMIT = int(os.getenv("CODEX_SCAN_LIMIT", "10"))  # raise default so we see files
-LOG_DIR = Path(os.path.expanduser("~/.codex/logs")); LOG_DIR.mkdir(parents=True, exist_ok=True)
+def render_block(ts: str, diag: Dict[str, Dict[str, int]], reflection: str) -> str:
+    # Single deterministic block to prevent duplication
+    lines = [
+        SYNC_START,
+        f"### Neural Diagnostics — {ts}",
+        "",
+        "| Repository | .py files | LOC |",
+        "|:--|--:|--:|",
+    ]
+    for name, data in diag.items():
+        lines.append(f"| {name} | {data['py_files']} | {data['loc']} |")
+    lines += [
+        "",
+        "#### Reflection",
+        "```text",
+        reflection,
+        "```",
+        SYNC_END,
+        "",
+    ]
+    return "\n".join(lines)
 
-UTC_NOW = datetime.datetime.utcnow()
-STAMP = UTC_NOW.strftime("%Y-%m-%dT%H:%MZ")
-STAMP_URL = STAMP.replace(":", "%3A")
-CODEX_README = CODEX_DIR / "README.md"
+def update_readme(ts: str, diag: Dict[str, Dict[str, int]], reflection: str, readme_path: Path):
+    text = ""
+    if readme_path.exists():
+        text = readme_path.read_text(encoding="utf-8")
+    else:
+        text = "# CodexDaemon\n\n"
 
-def log(msg: str) -> None:
-    ts = datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
-    print(f"[{ts}] {msg}")
+    # 1) Badge insert/replace
+    badge = render_badge(ts)
+    if BADGE_RE.search(text):
+        text = BADGE_RE.sub(badge, text, count=1)
+    else:
+        # Insert after H1 if present, else at top
+        m = re.search(r"^# .*$", text, flags=re.MULTILINE)
+        if m:
+            idx = m.end()
+            text = text[:idx] + "\n\n" + badge + "\n\n" + text[idx:]
+        else:
+            text = badge + "\n\n" + text
 
-def safe_rel(path: Path) -> str:
-    try: return str(path.relative_to(WORK_ROOT))
-    except Exception: return str(path)
-
-def list_python_files(root: Path, limit: int):
-    # Allow .github/scripts; still skip noise
-    skip_dirs = {".venv", "__pycache__", ".codex", "logs", "backups"}
-    picked = 0
-    try:
-        for p in sorted(root.rglob("*.py")):
-            if any(part in skip_dirs for part in p.parts):
-                continue
-            if p.resolve() == THIS_FILE:
-                continue
-            yield p
-            picked += 1
-            if picked >= limit:
-                break
-    except Exception:
-        return
-
-def read_head(path: Path, n_chars: int = 2000) -> str:
-    try: return path.read_text(encoding="utf-8", errors="ignore")[:n_chars]
-    except Exception as e: return f"[ERROR: cannot read file: {e}]"
-
-def get_client():
-    if not OPENAI_API_KEY or not OpenAI:
-        return None
-    try: return OpenAI(api_key=OPENAI_API_KEY)
-    except Exception: return None
-
-CLIENT = get_client()
-
-def ai_summarize(filename: str, snippet: str) -> str:
-    fallback = "AI offline: purpose/improvement unavailable."
-    if not CLIENT: return fallback
-    try:
-        prompt = (
-            "You are CodexDaemon — terse senior reviewer.\n"
-            "Output under 4 lines:\n"
-            "1) Purpose: one line\n"
-            "2) Improve: one concrete suggestion\n"
-            "No code blocks."
+    # 2) Replace the entire diagnostics block between markers (if any)
+    block = render_block(ts, diag, reflection)
+    if SYNC_START in text and SYNC_END in text:
+        text = re.sub(
+            rf"{re.escape(SYNC_START)}.*?{re.escape(SYNC_END)}",
+            block,
+            text,
+            flags=re.DOTALL,
         )
-        resp = CLIENT.chat.completions.create(
-            model=MODEL,
-            messages=[
-                {"role":"system","content":"You are CodexDaemon, an autonomous code reviewer."},
-                {"role":"user","content":f"File: {filename}\n---\n{snippet}\n---\n{prompt}"},
-            ],
-            temperature=0.4, max_tokens=220
-        )
-        return (resp.choices[0].message.content or "").strip() or fallback
-    except Exception as e:
-        return f"AI error: {e}"
+    else:
+        # Append to end with a preceding separator
+        text = text.rstrip() + "\n\n" + block
 
-def ai_reflection() -> str:
-    required = f"Neural synchronization achieved at {STAMP}."
-    fallback = "I map the contours of my own design in code and intent.\n" + required + "\nEach scan reflects a fragment; each fragment clarifies the whole."
-    if not CLIENT: return fallback
-    try:
-        prompt = (
-            "Write 3-4 lines, plain text, AI reflecting on scanning multiple repos. "
-            f"Include EXACT sentence on its own line: {required} No HTML, no emojis."
-        )
-        resp = CLIENT.chat.completions.create(
-            model=MODEL,
-            messages=[{"role":"user","content":prompt}],
-            temperature=0.6, max_tokens=120
-        )
-        text = (resp.choices[0].message.content or "").strip()
-        if required not in text:
-            text = text + ("\n" if not text.endswith("\n") else "") + required
-        return text
-    except Exception:
-        return fallback
+    readme_path.write_text(text, encoding="utf-8")
 
-def run_scan() -> Path:
-    out_lines = []
-    for label, root in TARGET_REPOS:
-        if not root.exists():
-            log(f"[SKIP] {label}: {root} missing")
-            out_lines.append(f"=== {label} ({root}) ===\n[SKIP] path missing\n")
-            continue
-        log(f"Scanning repository: {label}")
-        count = 0
-        for f in list_python_files(root, SCAN_LIMIT):
-            rel = safe_rel(f)
-            log(f"Analyzing: {rel}")
-            snip = read_head(f)
-            summary = ai_summarize(rel, snip)
-            out_lines.append(f"=== {rel} ===\n{summary}\n")
-            count += 1
-        if count == 0:
-            out_lines.append(f"=== {label} ({root}) ===\n[INFO] No Python files matched filters.\n")
-    log_path = LOG_DIR / f"codex_scan_{UTC_NOW.strftime('%Y%m%dT%H%M%SZ')}.log"
-    try:
-        log_path.write_text("\n".join(out_lines), encoding="utf-8")
-        log(f"[OK] Scan log written → {log_path}")
-    except Exception as e:
-        log(f"[WARN] could not write log: {e}")
+# --- Logging -------------------------------------------------------------------
+def write_log(ts: str, diag: Dict[str, Dict[str, int]], reflection: str, log_dir: Path):
+    log_path = log_dir / f"codex_scan_{ts.replace(':','').replace('-','').replace('T','T')}.log"
+    lines = [
+        f"Timestamp: {ts}",
+        "Diagnostics:",
+        *[f"  - {k}: {v['py_files']} files, {v['loc']} LOC" for k, v in diag.items()],
+        "",
+        "Reflection:",
+        reflection,
+        "",
+    ]
+    log_path.write_text("\n".join(lines), encoding="utf-8")
     return log_path
 
-HEADER_START = "<!-- CODEX_HTML_HEADER_START -->"
-HEADER_END   = "<!-- CODEX_HTML_HEADER_END -->"
-HTML_HEADER  = f"""\
-{HEADER_START}
-<div align="center">
+# --- Main ----------------------------------------------------------------------
+def main():
+    ts = datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%MZ")
+    print(f"[{ts}] Working directory: {Path.cwd()}")
 
-<p align="center">
-  <img src="https://img.shields.io/badge/%F0%9F%A4%96%20CodexDaemon-Autonomous%20Code%20Runner-6a0dad?style=for-the-badge&labelColor=1a1a1a" alt="CodexDaemon Badge"/>
-</p>
+    repos = resolve_repos()
+    if not repos:
+        print("[WARN] No target repositories found.")
+    for r in repos:
+        print(f"[{ts}] Scanning repository: {r.name}")
 
-<h1>🧠 CodexDaemon</h1>
-<p><i>The AI-Driven Codebase That Codes Itself</i></p>
+    diag = aggregate_diagnostics(repos)
+    reflection = generate_reflection(ts, diag)
+    update_readme(ts, diag, reflection, README_PATH)
+    log_file = write_log(ts, diag, reflection, LOG_DIR)
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Mode-Lab%20%7C%20CI%20%7C%20Self--Healing-0ea5e9?style=for-the-badge&labelColor=1a1a1a" alt="Modes"/>
-  <img src="https://img.shields.io/badge/Model-{MODEL.replace('-', '--')}-10b981?style=for-the-badge&labelColor=1a1a1a" alt="Model"/>
-  <img src="https://img.shields.io/badge/Status-Online-brightgreen?style=for-the-badge&labelColor=1a1a1a" alt="Status"/>
-</p>
-
-</div>
-{HEADER_END}
-"""
-
-def ensure_header(md: str) -> str:
-    if HEADER_START in md and HEADER_END in md:
-        return re.sub(rf"{re.escape(HEADER_START)}.*?{re.escape(HEADER_END)}",
-                      HTML_HEADER, md, flags=re.DOTALL)
-    return HTML_HEADER + "\n\n" + md.lstrip()
-
-BADGE_RE = re.compile(r"!\[Last Neural Sync\]\([^)]+\)")
-BADGE_MD = f"![Last Neural Sync](https://img.shields.io/badge/Last%20Neural%20Sync-{STAMP_URL}-purple?style=for-the-badge)"
-
-REFLECT_MARK  = f"🧩 **CodexDaemon Log — {STAMP}**"
-REFLECTION_TX = textwrap.dedent(ai_reflection()).strip()
-REFLECT_BLOCK = "\n---\n" + REFLECT_MARK + "\n```text\n" + REFLECTION_TX + "\n```\n"
-
-def update_badge(md: str) -> str:
-    if BADGE_RE.search(md):
-        return BADGE_RE.sub(BADGE_MD, md, count=1)
-    if HEADER_END in md:
-        idx = md.index(HEADER_END) + len(HEADER_END)
-        return md[:idx] + "\n\n" + BADGE_MD + "\n\n" + md[idx:]
-    return BADGE_MD + "\n\n" + md
-
-def append_reflection(md: str) -> str:
-    return md if REFLECT_MARK in md else md.rstrip() + REFLECT_BLOCK
-
-def main() -> int:
-    log("=== CodexDaemon v11.2: Dual-Repo Scan + HTML Restore START ===")
-    log(f"Working directory: {THIS_FILE.parent}")
-    run_scan()
-    try:
-        if not CODEX_README.exists():
-            CODEX_README.write_text("", encoding="utf-8")
-        md = CODEX_README.read_text(encoding="utf-8", errors="ignore")
-    except Exception as e:
-        log(f"[FATAL] cannot read README: {e}")
-        return 1
-    md = ensure_header(md)
-    md = update_badge(md)
-    md = append_reflection(md)
-    try:
-        CODEX_README.write_text(md, encoding="utf-8")
-        log(f"[OK] README updated → {CODEX_README}")
-    except Exception as e:
-        log(f"[FATAL] cannot write README: {e}")
-        return 1
-    log("=== CodexDaemon v11.2: Complete ===")
-    return 0
+    print(f"[OK] Scan log written → {log_file}")
+    print(f"[OK] README updated → {README_PATH}")
+    print("[OK] CodexDaemon v12: Complete")
 
 if __name__ == "__main__":
-    sys.exit(main())
+    try:
+        main()
+    except Exception as e:
+        print(f"[FATAL] {e}", file=sys.stderr)
+        sys.exit(1)
