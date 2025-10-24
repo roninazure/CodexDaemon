@@ -1,65 +1,51 @@
 #!/usr/bin/env python3
 """
-CodexDaemon v12.5 — Showcase Edition (Certified)
-------------------------------------------------
-• Scans 3 repos (mad-scientist-code, CodexDaemon, priv) for .py files.
-• Computes concise diagnostics (file count, LOC).
-• Generates a stoic AI reflection (fallback if API unavailable).
-• Updates CodexDaemon/README.md:
-    - Pure-Markdown "Last Neural Sync" badge (GitHub-safe).
-    - Replaces *all* <!--SYNC-START-->…<!--SYNC-END--> blocks with one clean block.
-    - Preserves your HTML header and inserts an OpenAI logo badge next to the Model badge (idempotent).
-• Writes a compact log to ~/.codex/logs/.
+CodexDaemon v12.6 — Showcase Clean Edition
+------------------------------------------
+• Scans 3 repos (mad-scientist-code, CodexDaemon, priv) for .py files and LOC.
+• Generates a stoic reflection (fallback if API unavailable).
+• Updates README.md with:
+    - One clean "Last Neural Sync" badge.
+    - One <OpenAI> badge (top header only).
+    - One <!--SYNC-START-->...<!--SYNC-END--> diagnostics block.
+• Removes duplicate SYNC blocks and stray/broken <img> tags.
+• Writes detailed log to ~/.codex/logs.
 
-ENV (optional, auto-loaded from /Users/scottsteele/work/CodexDaemon/.env):
-    OPENAI_API_KEY=...
-    CODEX_MODEL=gpt-4o-mini
-    CODEX_ROOT=/Users/scottsteele/work
-    CODEX_REPOS_JSON=["/path/one","/path/two",...]
+Certified to preserve all your visual formatting and HTML structure.
 """
 
 import os, re, json, datetime, sys
 from pathlib import Path
 from typing import List, Dict, Tuple
 
-# ---------- Configuration ------------------------------------------------------
+# --- CONFIG -------------------------------------------------------------------
 
-DEFAULT_ROOT = Path(os.getenv("CODEX_ROOT", "/Users/scottsteele/work")).resolve()
-CODEXDAEMON_ROOT = DEFAULT_ROOT / "CodexDaemon"
-ENV_PATH = CODEXDAEMON_ROOT / ".env"
-README_PATH = CODEXDAEMON_ROOT / "README.md"
-
+ROOT = Path(os.getenv("CODEX_ROOT", "/Users/scottsteele/work")).resolve()
+CODEX = ROOT / "CodexDaemon"
+README = CODEX / "README.md"
+ENV = CODEX / ".env"
 LOG_DIR = Path.home() / ".codex" / "logs"
 LOG_DIR.mkdir(parents=True, exist_ok=True)
 
 BADGE_RE = re.compile(r"!\[Last Neural Sync\]\([^)]+\)")
-SYNC_START = "<!--SYNC-START-->"
-SYNC_END = "<!--SYNC-END-->"
-HEADER_START = "<!-- CODEX_HTML_HEADER_START -->"
-HEADER_END = "<!-- CODEX_HTML_HEADER_END -->"
+SYNC_START, SYNC_END = "<!--SYNC-START-->", "<!--SYNC-END-->"
+HEADER_START, HEADER_END = "<!-- CODEX_HTML_HEADER_START -->", "<!-- CODEX_HTML_HEADER_END -->"
 
-OPENAI_LOGO_BADGE = (
+OPENAI_BADGE = (
     '<img src="https://img.shields.io/badge/OpenAI-•-black?logo=openai&logoColor=white'
     '&style=for-the-badge&labelColor=1a1a1a" alt="OpenAI"/>'
 )
 
-EXCLUDE_PARTS = {
-    ".venv", "__pycache__", ".git", ".codex", "backups", ".github/backups", "logs"
-}
+EXCLUDE = {".venv", "__pycache__", ".git", ".codex", "logs", "backups", ".github/backups"}
 
-# ---------- Utilities ----------------------------------------------------------
+# --- ENV / OPENAI -------------------------------------------------------------
 
-def log(msg: str):
-    ts = datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
-    print(f"[{ts}] {msg}")
-
-def load_env(dotenv_path: Path):
+def load_env(path: Path):
     try:
         from dotenv import load_dotenv
-        load_dotenv(dotenv_path)
-        log(f"Loaded environment from: {dotenv_path}")
+        load_dotenv(path)
+        print(f"[OK] Loaded .env from {path}")
     except Exception:
-        # .env optional
         pass
 
 def init_openai():
@@ -72,143 +58,56 @@ def init_openai():
     except Exception:
         return None
 
-def resolve_repos() -> List[Path]:
+# --- REPO SCAN ---------------------------------------------------------------
+
+def repos() -> List[Path]:
     raw = os.getenv("CODEX_REPOS_JSON", "").strip()
     if raw:
         try:
             paths = [Path(p).expanduser().resolve() for p in json.loads(raw)]
-            repos = [p for p in paths if p.exists()]
-            if repos:
-                return repos
+            return [p for p in paths if p.exists()]
         except Exception:
             pass
-    candidates = [
-        DEFAULT_ROOT / "mad-scientist-code",
-        DEFAULT_ROOT / "CodexDaemon",
-        DEFAULT_ROOT / "priv",
-    ]
-    return [p for p in candidates if p.exists()]
+    cands = [ROOT / "mad-scientist-code", ROOT / "CodexDaemon", ROOT / "priv"]
+    return [p for p in cands if p.exists()]
 
-def should_skip(path: Path) -> bool:
-    parts = set(path.parts)
-    return any(ex in parts for ex in EXCLUDE_PARTS)
+def skip(path: Path) -> bool:
+    return any(ex in path.parts for ex in EXCLUDE)
 
-def scan_repo(repo: Path) -> Tuple[int, int]:
-    py_count, loc = 0, 0
-    for p in repo.rglob("*.py"):
-        if should_skip(p):
+def scan(repo: Path) -> Tuple[int, int]:
+    count = loc = 0
+    for f in repo.rglob("*.py"):
+        if skip(f):
             continue
         try:
-            with p.open("r", encoding="utf-8", errors="ignore") as f:
-                lines = f.readlines()
-            py_count += 1
-            loc += len(lines)
+            with f.open("r", encoding="utf-8", errors="ignore") as h:
+                loc += sum(1 for _ in h)
+            count += 1
         except Exception:
-            continue
-    return py_count, loc
+            pass
+    return count, loc
 
-def aggregate_diagnostics(repos: List[Path]) -> Dict[str, Dict[str, int]]:
-    out: Dict[str, Dict[str, int]] = {}
+def diag(repos: List[Path]) -> Dict[str, Dict[str, int]]:
+    out = {}
     for r in repos:
-        files, lines = scan_repo(r)
-        out[r.name] = {"py_files": files, "loc": lines}
+        f, l = scan(r)
+        out[r.name] = {"py_files": f, "loc": l}
     return out
 
-# ---------- Content renderers --------------------------------------------------
+# --- REFLECTION ---------------------------------------------------------------
 
-def render_badge(ts: str) -> str:
-    # Pure Markdown shields badge — safe in both themes.
-    return f"![Last Neural Sync](https://img.shields.io/badge/Last%20Neural%20Sync-{ts}-purple?style=for-the-badge)"
-
-def render_block(ts: str, diag: Dict[str, Dict[str, int]], reflection: str) -> str:
-    # Single deterministic block to prevent duplication.
-    lines = [
-        SYNC_START,
-        f"### Neural Diagnostics — {ts}",
-        "",
-        "| Repository | .py files | LOC |",
-        "|:--|--:|--:|",
-    ]
-    for name, data in diag.items():
-        lines.append(f"| {name} | {data['py_files']} | {data['loc']} |")
-    lines += [
-        "",
-        "#### Reflection",
-        "```text",
-        reflection.strip(),
-        "```",
-        SYNC_END,
-        "",
-    ]
-    return "\n".join(lines)
-
-# ---------- Header manipulation ------------------------------------------------
-
-def ensure_openai_badge_in_header(readme_text: str) -> str:
-    """
-    Within CODEX_HTML_HEADER block, ensure a single OpenAI logo badge is present
-    alongside the Model badge paragraph. Idempotent and preserves existing HTML.
-    """
-    start_idx = readme_text.find(HEADER_START)
-    end_idx = readme_text.find(HEADER_END)
-    if start_idx == -1 or end_idx == -1 or end_idx <= start_idx:
-        return readme_text  # No header markers — do nothing.
-
-    header_block = readme_text[start_idx:end_idx + len(HEADER_END)]
-
-    # Already present?
-    if "logo=openai" in header_block:
-        return readme_text
-
-    # Try to insert before the closing </p> of the badges line
-    # We specifically look for the <p align="center"> that contains the Model badge.
-    pattern = re.compile(
-        r'(<p\s+align="center">\s*.*?Model-.*?</p>)',
-        flags=re.DOTALL | re.IGNORECASE,
-    )
-
-    def _inject(match: re.Match) -> str:
-        segment = match.group(1)
-        if "logo=openai" in segment:
-            return segment  # safety
-        # Insert the OpenAI badge right before closing </p>, separated by space.
-        return segment.replace("</p>", f"  {OPENAI_LOGO_BADGE}\n</p>")
-
-    new_header_block, n = pattern.subn(_inject, header_block, count=1)
-    if n == 0:
-        # Fallback: append logo at the very end of the first <p align="center"> in header.
-        fallback_pat = re.compile(r'(<p\s+align="center">.*?</p>)', re.DOTALL | re.IGNORECASE)
-        new_header_block, n2 = fallback_pat.subn(
-            lambda m: m.group(1).replace("</p>", f"  {OPENAI_LOGO_BADGE}\n</p>"),
-            header_block,
-            count=1,
-        )
-        if n2 == 0:
-            return readme_text  # Give up silently to avoid damaging header.
-
-    return readme_text[:start_idx] + new_header_block + readme_text[end_idx + len(HEADER_END):]
-
-# ---------- AI reflection ------------------------------------------------------
-
-def generate_reflection(ts: str, diag: Dict[str, Dict[str, int]], client) -> str:
-    # Compose concise diagnostic context
-    context = "Diagnostics:\n" + "\n".join(
-        f"- {name}: {data['py_files']} files, {data['loc']} LOC"
-        for name, data in diag.items()
-    )
+def reflection(ts: str, data: Dict[str, Dict[str, int]], client) -> str:
+    ctx = "\n".join(f"- {k}: {v['py_files']} files, {v['loc']} LOC" for k, v in data.items())
     prompt = (
-        "You are CodexDaemon: a disciplined, analytical system. "
-        "Write a concise, stoic reflection (3–5 lines, plain text, no emojis, no HTML). "
-        "End with the exact line:\n"
-        f"Neural synchronization achieved at {ts}.\n\n"
-        f"{context}"
+        "You are CodexDaemon: a logical, analytical system. "
+        "Write a concise 3–5 line stoic reflection (plain text only). "
+        "End with: 'Neural synchronization achieved at {ts}.'\n\n"
+        f"{ctx}"
     )
-
     if client:
         try:
-            model = os.getenv("CODEX_MODEL", "gpt-4o-mini")
             resp = client.chat.completions.create(
-                model=model,
+                model=os.getenv("CODEX_MODEL", "gpt-4o-mini"),
                 messages=[{"role": "user", "content": prompt}],
                 temperature=0.3,
                 max_tokens=160,
@@ -216,97 +115,96 @@ def generate_reflection(ts: str, diag: Dict[str, Dict[str, int]], client) -> str
             text = resp.choices[0].message.content.strip()
             if not text.endswith(f"Neural synchronization achieved at {ts}."):
                 text += f"\nNeural synchronization achieved at {ts}."
-            # Normalize any accidental fenced code inside to plain text
-            text = re.sub(r"```+.*?```+", lambda m: m.group(0).replace("`", ""), text, flags=re.DOTALL)
-            return text
+            return re.sub(r"`+", "", text)
         except Exception:
             pass
+    lines = " | ".join(f"{k}: {v['py_files']} files, {v['loc']} LOC" for k, v in data.items())
+    return f"System evaluation complete. {lines}\nNeural synchronization achieved at {ts}."
 
-    # Fallback reflection
-    lines = []
-    for name, data in diag.items():
-        lines.append(f"{name}: {data['py_files']} files, {data['loc']} LOC")
-    body = " | ".join(lines) if lines else "No repositories detected."
-    return (
-        "System evaluation complete. No integrity drift detected.\n"
-        f"{body}\n"
-        f"Neural synchronization achieved at {ts}."
-    )
+# --- MARKDOWN RENDER ----------------------------------------------------------
 
-# ---------- README update ------------------------------------------------------
+def badge(ts: str) -> str:
+    return f"![Last Neural Sync](https://img.shields.io/badge/Last%20Neural%20Sync-{ts}-purple?style=for-the-badge)"
 
-def update_readme(ts: str, diag: Dict[str, Dict[str, int]], reflection: str, readme_path: Path):
-    text = readme_path.read_text(encoding="utf-8") if readme_path.exists() else "# CodexDaemon\n\n"
+def sync_block(ts: str, d: Dict[str, Dict[str, int]], ref: str) -> str:
+    out = [
+        SYNC_START,
+        f"### Neural Diagnostics — {ts}",
+        "",
+        "| Repository | .py files | LOC |",
+        "|:--|--:|--:|",
+    ]
+    out += [f"| {k} | {v['py_files']} | {v['loc']} |" for k, v in d.items()]
+    out += ["", "#### Reflection", "```text", ref.strip(), "```", SYNC_END, ""]
+    return "\n".join(out)
 
-    # 1) Update or inject the Last Neural Sync badge
-    badge = render_badge(ts)
-    if BADGE_RE.search(text):
-        text = BADGE_RE.sub(badge, text, count=1)
-    else:
-        # Prefer to place after the H1 if present; else at very top.
-        m = re.search(r"^# .*$", text, flags=re.MULTILINE)
-        if m:
-            idx = m.end()
-            text = text[:idx] + "\n\n" + badge + "\n\n" + text[idx:]
-        else:
-            text = badge + "\n\n" + text
+# --- HEADER CLEANUP -----------------------------------------------------------
 
-    # 2) Ensure a single OpenAI logo badge in the HTML header (idempotent)
-    text = ensure_openai_badge_in_header(text)
-
-    # 3) Replace ALL existing SYNC blocks with a single fresh one
-    block = render_block(ts, diag, reflection)
-    sync_re = re.compile(
-        re.escape(SYNC_START) + r".*?" + re.escape(SYNC_END),
+def clean_header(txt: str) -> str:
+    """Ensure a single OpenAI badge; remove broken images."""
+    s, e = txt.find(HEADER_START), txt.find(HEADER_END)
+    if s == -1 or e == -1:
+        return txt
+    block = txt[s:e+len(HEADER_END)]
+    # Remove stray/broken <img> tags before reinjecting
+    block = re.sub(r'<img[^>]+alt="OpenAI"[^>]*>', "", block)
+    block = re.sub(r'<img[^>]+src="[^"]+\?"[^>]*>', "", block)
+    # Reinstate single OpenAI badge in the top <p align="center">
+    block = re.sub(
+        r'(<p\s+align="center">[^<]+CodexDaemon[^<]+)</p>',
+        lambda m: m.group(1) + f'  {OPENAI_BADGE}</p>',
+        block,
+        count=1,
         flags=re.DOTALL,
     )
-    if sync_re.search(text):
-        text = sync_re.sub(block, text)  # Replace all occurrences
-    else:
+    return txt[:s] + block + txt[e+len(HEADER_END):]
+
+# --- README UPDATE ------------------------------------------------------------
+
+def update_readme(ts: str, d: Dict[str, Dict[str, int]], ref: str, path: Path):
+    text = path.read_text(encoding="utf-8") if path.exists() else "# CodexDaemon\n\n"
+    # 1) Badge
+    text = BADGE_RE.sub(badge(ts), text, count=1) if BADGE_RE.search(text) else badge(ts) + "\n\n" + text
+    # 2) Header fix
+    text = clean_header(text)
+    # 3) Replace ALL SYNC blocks with one
+    block = sync_block(ts, d, ref)
+    text = re.sub(rf"{re.escape(SYNC_START)}.*?{re.escape(SYNC_END)}", block, text, flags=re.S)
+    if SYNC_START not in text:
         text = text.rstrip() + "\n\n" + block
+    path.write_text(text, encoding="utf-8")
 
-    readme_path.write_text(text, encoding="utf-8")
+# --- LOGGING ------------------------------------------------------------------
 
-# ---------- Logging ------------------------------------------------------------
-
-def write_log(ts: str, diag: Dict[str, Dict[str, int]], reflection: str, log_dir: Path) -> Path:
-    safe_ts = ts.replace(":", "").replace("-", "")
-    log_path = log_dir / f"codex_scan_{safe_ts}.log"
-    lines = [
+def write_log(ts: str, d: Dict[str, Dict[str, int]], ref: str) -> Path:
+    f = LOG_DIR / f"codex_scan_{ts.replace(':','').replace('-','')}.log"
+    content = "\n".join([
         f"Timestamp: {ts}",
         "Diagnostics:",
-        *[f"  - {k}: {v['py_files']} files, {v['loc']} LOC" for k, v in diag.items()],
+        *[f"  - {k}: {v['py_files']} files, {v['loc']} LOC" for k, v in d.items()],
         "",
         "Reflection:",
-        reflection,
-        "",
-    ]
-    log_path.write_text("\n".join(lines), encoding="utf-8")
-    return log_path
+        ref, ""
+    ])
+    f.write_text(content, encoding="utf-8")
+    return f
 
-# ---------- Main ---------------------------------------------------------------
+# --- MAIN ---------------------------------------------------------------------
 
 def main():
-    load_env(ENV_PATH)
+    load_env(ENV)
     client = init_openai()
-
     ts = datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%MZ")
-    log(f"Working directory: {Path.cwd()}")
+    print(f"[{ts}] Starting CodexDaemon v12.6 scan")
 
-    repos = resolve_repos()
-    if not repos:
-        log("WARN: No target repositories found.")
-    for r in repos:
-        log(f"Scanning repository: {r.name}")
-
-    diag = aggregate_diagnostics(repos)
-    reflection = generate_reflection(ts, diag, client)
-    update_readme(ts, diag, reflection, README_PATH)
-    log_file = write_log(ts, diag, reflection, LOG_DIR)
-
-    log(f"OK: Scan log written → {log_file}")
-    log(f"OK: README updated → {README_PATH}")
-    log("=== CodexDaemon v12.5: Complete ===")
+    rlist = repos()
+    diag_data = diag(rlist)
+    ref = reflection(ts, diag_data, client)
+    update_readme(ts, diag_data, ref, README)
+    log = write_log(ts, diag_data, ref)
+    print(f"[OK] Updated README → {README}")
+    print(f"[OK] Log saved → {log}")
+    print("[COMPLETE] CodexDaemon v12.6 Showcase Clean")
 
 if __name__ == "__main__":
     try:
