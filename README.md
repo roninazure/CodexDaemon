@@ -1,5 +1,3 @@
-![Last Neural Sync](https://img.shields.io/badge/Last%20Neural%20Sync-2025-10-25T00:23Z-purple?style=for-the-badge)
-
 <!-- CODEX_HTML_HEADER_START -->
 <div align="center">
 
