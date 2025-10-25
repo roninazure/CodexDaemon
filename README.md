@@ -62,6 +62,7 @@ It’s part of my experimental AI-Ops stack: a network of self-improving, self-m
 #### 🔹 Run a Local Instruction
 ```bash
 python3 codex_runner.py "add a function that prints the current git branch" --commit
+```
 
 <div align="center" style="background:#0a0a0a;padding:20px;border-radius:16px;
 border:1px solid #0ea5e9;box-shadow:0 0 10px #0ea5e9, inset 0 0 10px #0ea5e9;">
