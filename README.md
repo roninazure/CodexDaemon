@@ -44,7 +44,7 @@ It’s part of my experimental AI-Ops stack: a network of self-improving, self-m
 | 🤖 **Autonomous Commits** | Every AI-driven modification is committed and pushed back to GitHub — no human intervention required. |
 | 🔁 **Self-Review Workflows** | On each push, CodexDaemon re-analyzes its own logic for clarity, efficiency, and readability. |
 | 🧩 **Local + Cloud Modes** | Runs locally via `.env`, or fully headless inside GitHub Actions using repository secrets. |
-| 🧱 **Composable Design** | Can chain with other agents — ScottGPT, PrivateGPT, AutoJob, and the Mad Scientist README Engine. |
+| 🧱 **Composable Design** | Can chain with other repos and agents — Currently chaining Mad Scientist Engine. |
 
 ---
 
@@ -90,7 +90,4 @@ suggesting a focused approach to development. Neural synchronization achieved at
 <!--SYNC-END-->
 ```
 
-
-<!-- heartbeat: 2025-10-30T02:27:18.127597Z -->
-
-<!-- heartbeat: 2025-10-30T02:33:15.297953Z -->
+<!-- heartbeat: 2025-10-30T02:31:42.109007Z -->
