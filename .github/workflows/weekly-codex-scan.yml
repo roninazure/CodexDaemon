@@ -1,4 +1,4 @@
-name: Weekly CodexDaemon Scan
+name: 🧠 Weekly CodexDaemon Intelligence Scan
 
 on:
   schedule:
@@ -12,29 +12,34 @@ jobs:
   scan:
     runs-on: ubuntu-latest
     timeout-minutes: 25
+
     steps:
-      - name: Checkout CodexDaemon
+      - name: 🧾 Checkout CodexDaemon
         uses: actions/checkout@v4
 
-      - name: Set up Python
+      - name: 🐍 Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
-      - name: Install dependencies
+      - name: 📦 Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Run CodexDaemon Scan (Phase 7.9)
+      - name: 🧠 Run CodexDaemon Scan (Phase 7.9)
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
-      python ./CodexDaemon/.github/scripts/codexdaemon_scan.py || python .github/scripts/codexdaemon_scan.py
-      - name: Commit weekly scan log and reflection
+          python ./CodexDaemon/.github/scripts/codexdaemon_scan.py || python .github/scripts/codexdaemon_scan.py
+
+      - name: 📝 Commit weekly scan log and README update
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git status
           git add README.md .codex/logs/*.log || true
+          git status
+          git diff --cached || true
           git commit -m "weekly: codex scan + reflection $(date -u +'%Y-%m-%dT%H:%M:%SZ')" || echo "No changes to commit"
           git push
