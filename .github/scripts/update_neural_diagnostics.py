@@ -15,19 +15,22 @@ SYNC_END = "<!--SYNC-END-->"
 
 def count_py_files_and_loc(repo_path):
     try:
-        output = subprocess.check_output(
-            f"find {repo_path} -name '*.py' -type f | xargs wc -l",
-            shell=True, stderr=subprocess.DEVNULL
-        ).decode('utf-8')
-
         total_lines = 0
         file_count = 0
-        for line in output.strip().split("\n"):
-            if line.strip().endswith(".py"):
-                parts = line.strip().split()
-                if parts and parts[0].isdigit():
-                    total_lines += int(parts[0])
-                    file_count += 1
+
+        for root, dirs, files in os.walk(repo_path):
+            dirs[:] = [d for d in dirs if d not in {
+                'dist', 'build', '.venv', '__pycache__', '.git', '.mypy_cache', '.pytest_cache'
+            }]
+            for file in files:
+                if file.endswith(".py"):
+                    try:
+                        with open(os.path.join(root, file), "r", encoding="utf-8") as f:
+                            file_count += 1
+                            total_lines += sum(1 for _ in f)
+                    except (UnicodeDecodeError, FileNotFoundError):
+                        continue
+
         return file_count, total_lines
     except Exception:
         return 0, 0
