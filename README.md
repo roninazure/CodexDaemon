@@ -31,7 +31,7 @@
 <th align="right">LOC</th>
 </tr>
 <tr><td>CodexDaemon</td><td align='right'>4</td><td align='right'>398</td></tr>
-<tr><td>mad-scientist-code</td><td align='right'>2437</td><td align='right'>588592</td></tr>
+<tr><td>mad-scientist-code</td><td align='right'>5</td><td align='right'>488</td></tr>
 <tr><td>project-darc</td><td align='right'>1</td><td align='right'>148</td></tr>
 <tr><td>priv</td><td align='right'>1</td><td align='right'>146</td></tr>
 </table>
