@@ -46,3 +46,44 @@ suggesting a focused approach to development. Neural synchronization achieved at
 
 </div>
 <!--SYNC-END-->
+
+<!--CODEX-SCAN-START-->
+<div align="center" style="background:#1e1e1e;padding:20px;border-radius:16px;
+    border:1px solid #8b0000;box-shadow:0 0 10px #ff0000, inset 0 0 10px #8b0000;">
+
+<h3 style="color:#ff4444;">☣️ CodexDaemon Threat Scan — 2025-11-02T03:10:03Z</h3>
+
+<table style="width:90%;border-collapse:collapse;color:#f8f8f8;font-family:monospace;">
+<tr style="color:#ff4444;">
+<th align="left">File</th>
+<th align="right">Line</th>
+<th align="left">Pattern</th>
+</tr>
+<tr><td>codex_runner.py</td><td align='right'>18</td><td><code>import os</code></td></tr>
+<tr><td>codex_runner.py</td><td align='right'>119</td><td><code>@codex</code></td></tr>
+<tr><td>.github/scripts/codexdaemon_scan.py</td><td align='right'>2</td><td><code>import os</code></td></tr>
+<tr><td>.github/scripts/codexdaemon_scan.py</td><td align='right'>13</td><td><code>eval(</code></td></tr>
+<tr><td>.github/scripts/codexdaemon_scan.py</td><td align='right'>13</td><td><code>exec(</code></td></tr>
+<tr><td>.github/scripts/codexdaemon_scan.py</td><td align='right'>13</td><td><code>open(</code></td></tr>
+<tr><td>.github/scripts/codexdaemon_scan.py</td><td align='right'>13</td><td><code>import os</code></td></tr>
+<tr><td>.github/scripts/codexdaemon_scan.py</td><td align='right'>13</td><td><code>openai.api_key</code></td></tr>
+<tr><td>.github/scripts/codexdaemon_scan.py</td><td align='right'>14</td><td><code># evolve</code></td></tr>
+<tr><td>.github/scripts/codexdaemon_scan.py</td><td align='right'>14</td><td><code># hallucinate</code></td></tr>
+<tr><td>.github/scripts/codexdaemon_scan.py</td><td align='right'>14</td><td><code>@codex</code></td></tr>
+<tr><td>.github/scripts/codexdaemon_scan.py</td><td align='right'>26</td><td><code>open(</code></td></tr>
+<tr><td>.github/scripts/codexdaemon_scan.py</td><td align='right'>91</td><td><code>open(</code></td></tr>
+<tr><td>.github/scripts/update_neural_diagnostics.py</td><td align='right'>1</td><td><code>import os</code></td></tr>
+<tr><td>.github/scripts/update_neural_diagnostics.py</td><td align='right'>28</td><td><code>open(</code></td></tr>
+<tr><td>.github/scripts/update_neural_diagnostics.py</td><td align='right'>77</td><td><code>open(</code></td></tr>
+<tr><td>.github/scripts/update_neural_diagnostics.py</td><td align='right'>94</td><td><code>open(</code></td></tr>
+</table>
+
+<pre style="text-align:left;color:#f0cfcf;background:#111;padding:15px;
+    border-radius:10px;border:1px solid #8b0000;box-shadow:inset 0 0 6px #8b0000;">
+17 triggers detected across 3 files.
+CodexDaemon activated neural subroutines to trace instability and emergent traits.
+Threat sync complete at 2025-11-02T03:10:03Z.
+</pre>
+
+</div>
+<!--CODEX-SCAN-END-->
