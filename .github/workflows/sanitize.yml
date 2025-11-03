@@ -1,8 +1,8 @@
-name: 🧹 CodexDaemon Pre-Flight Sanitizer + Auto-Review Chain
+name: 🪜 CodexDaemon: Repo Sanitizer
 
 on:
-  push:
-    branches: [ main ]
+  schedule:
+    - cron: "0 10 * * *"  # Daily at 10:00 UTC
   workflow_dispatch:
 
 jobs:
@@ -10,42 +10,23 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: 🧩 Checkout repository
+      - name: 📥 Checkout repo
         uses: actions/checkout@v4
 
-      - name: 🧰 Set up Python
+      - name: 🐍 Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.10"
+          python-version: '3.x'
 
-      - name: 🧱 Install dependencies
-        run: pip install -r requirements.txt
-
-      - name: 🧹 Run CodexDaemon sanitizer
-        env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      - name: 🧹 Run CodexDaemon Sanitizer
         run: |
-          echo "🚿 Cleaning Python files..."
-          python3 codex_runner.py 
+          python3 .github/scripts/sanitize_codex_repo.py
 
-      - name: 📤 Commit and push sanitized files
+      - name: 🚀 Commit and push if sanitized
         run: |
-          git config user.name "CodexDaemon Bot"
-          git config user.email "bot@codexdaemon.local"
-          git add .
-          git commit -m "🧹 Auto-sanitized repo before build" || echo "No changes to commit"
-          git push || echo "No remote push needed"
+          git config user.name "CodexDaemon"
+          git config user.email "actions@github.com"
+          git add README.md
+          git commit -m "🪜 CodexDaemon: Auto-sanitized repo" || echo "No changes to commit"
+          git push || echo "No push needed"
 
-  trigger-review:
-    needs: sanitize
-    runs-on: ubuntu-latest
-    if: ${{ success() }}
-
-    steps:
-      - name: ⚡ Trigger CodexDaemon Auto-Review
-        uses: peter-evans/workflow-dispatch@v1
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          repository: roninazure/CodexDaemon
-          workflow: on-push-codex.yml
-          ref: main
