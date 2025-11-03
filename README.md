@@ -108,11 +108,19 @@ Threat sync complete at 2025-11-02T03:10:03Z.
 <!--CODEX-SCAN-END-->
 
 <!-- SANITIZE_LOG_START -->
-### 🧹 CodexDaemon Sanitize Log — 2025-11-03T04:10:59Z
-- ✅ 8 Python files scanned
-- ✅ 0 files auto-cleaned
-- ✅ No syntax errors
+<div align="center" style="background:#111; padding:20px; border-radius:16px;
+    border:1px solid #22c55e; box-shadow:0 0 10px #22c55e, inset 0 0 10px #22c55e;
+    color:#e0ffe0; font-family:monospace; margin-top:30px;">
 
+<h3 style="color:#22c55e;">🧹 CodexDaemon Sanitize Log — 2025-11-03T04:10:59Z</h3>
+
+<ul style="list-style:none; padding-left:0; font-size:14px;">
+  <li>✅ 8 Python files scanned</li>
+  <li>✅ 0 files auto-cleaned</li>
+  <li>✅ No syntax errors</li>
+</ul>
+
+</div>
 <!-- SANITIZE_LOG_END -->
 
 <!-- CODEX_MUTATION_SCORE_START -->
