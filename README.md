@@ -124,12 +124,15 @@ Threat sync complete at 2025-11-03T12:59:47Z.
 <!--CODEX-SCAN-END-->
 
 <!-- SANITIZE_LOG_START -->
-<h3>🧹 CodexDaemon Sanitize Log — 2025-11-03T04:10:59Z</h3>
-<ul style="list-style-type:none;padding-left:0;">
-  <li>✅ <strong>8</strong> Python files scanned</li>
-  <li>✅ <strong>0</strong> files auto-cleaned</li>
-  <li>✅ <strong>No</strong> syntax errors</li>
-</ul>
+<h3 align="center">🧹 CodexDaemon Sanitize Log — <code>2025‑11‑03T04:10:59Z</code></h3>
+
+<div align="center">
+
+✅ <strong>8</strong> Python files scanned  
+✅ <strong>0</strong> files auto-cleaned  
+✅ <strong>No</strong> syntax errors  
+
+</div>
 <!-- SANITIZE_LOG_END -->
 
 <!-- CODEX_MUTATION_SCORE_START -->
