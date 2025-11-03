@@ -26,7 +26,7 @@ jobs:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
           echo "🚿 Cleaning Python files..."
-          python3 codex_runner.py --sanitize
+          python3 codex_runner.py 
 
       - name: 📤 Commit and push sanitized files
         run: |
