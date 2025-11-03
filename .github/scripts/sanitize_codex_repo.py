@@ -1,83 +1,94 @@
-#!/usr/bin/env python3
-"""
-CodexDaemon Repository Sanitizer v1.0
--------------------------------------
-Scans Python files, removes formatting issues, and logs results into README.md.
-"""
-
 import os
-import re
-from pathlib import Path
-from datetime import datetime
+import ast
+import datetime
 
-# === CONFIG ===
-ROOT_DIR = Path(__file__).resolve().parents[2]
-README_PATH = ROOT_DIR / "README.md"
-EXCLUDE_DIRS = {".venv", "__pycache__", ".git"}
+REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../'))
+README_PATH = os.path.join(REPO_ROOT, "README.md")
 
-# === FIND PYTHON FILES ===
-py_files = [
-    path for path in ROOT_DIR.rglob("*.py")
-    if not any(part in EXCLUDE_DIRS for part in path.parts)
-]
+SANITIZE_START = "<!-- SANITIZE_LOG_START -->"
+SANITIZE_END = "<!-- SANITIZE_LOG_END -->"
 
-fixed_files = []
-syntax_errors = []
+def scan_python_files():
+    python_files = []
+    for root, _, files in os.walk(REPO_ROOT):
+        if '.venv' in root or '__pycache__' in root:
+            continue
+        for f in files:
+            if f.endswith('.py'):
+                python_files.append(os.path.join(root, f))
+    return python_files
 
-# === CLEAN FILES ===
-for py_file in py_files:
-    try:
-        src = py_file.read_text(encoding="utf-8")
-    except Exception as e:
-        print(f"[SKIP] {py_file} - {e}")
-        continue
-
-    cleaned = src.replace("\t", "    ")
-    cleaned = re.sub(r"[ \t]+\n", "\n", cleaned)  # strip trailing whitespace
+def sanitize_file(filepath):
+    with open(filepath, 'r', encoding='utf-8', errors='surrogatepass') as f:
+        original_code = f.read()
 
     try:
-        compile(cleaned, str(py_file), "exec")
-    except SyntaxError as e:
-        syntax_errors.append(f"❌ {py_file} — {e.msg} (line {e.lineno})")
-        continue
+        tree = ast.parse(original_code)
+    except SyntaxError:
+        return False, False  # failed to parse
 
-    if cleaned != src:
-        py_file.write_text(cleaned, encoding="utf-8")
-        fixed_files.append(str(py_file))
+    cleaned_code = original_code.strip() + "\n"
+    was_modified = (cleaned_code != original_code)
 
-# === BUILD LOG BLOCK ===
-timestamp = datetime.utcnow().replace(microsecond=0).isoformat() + "Z"
-summary = f"""<!-- SANITIZE_LOG_START -->
-### 🧹 CodexDaemon Sanitize Log — {timestamp}
-- ✅ {len(py_files)} Python files scanned
-- ✅ {len(fixed_files)} files auto-cleaned
-- {"✅ No syntax errors" if not syntax_errors else f"❌ {len(syntax_errors)} syntax issues found"}
-"""
+    if was_modified:
+        with open(filepath, 'w', encoding='utf-8', errors='surrogatepass') as f:
+            f.write(cleaned_code)
 
-if syntax_errors:
-    summary += "\n\n" + "\n".join(f"- {line}" for line in syntax_errors)
+    return True, was_modified
 
-summary += "\n<!-- SANITIZE_LOG_END -->"
+def generate_sanitize_block(num_files, num_cleaned, syntax_errors):
+    timestamp = datetime.datetime.utcnow().isoformat(timespec='seconds') + "Z"
+    return f"""{SANITIZE_START}
+<div align="center" style="margin-top:30px; padding:20px; border-radius:16px;
+    border:1px solid #22c55e; box-shadow:0 0 10px #22c55e, inset 0 0 10px #22c55e;
+    background:#111; color:#e0e0e0; font-family:monospace;">
 
-# === INJECT INTO README.md ===
-if README_PATH.exists():
-    readme = README_PATH.read_text(encoding="utf-8")
-    if "<!-- SANITIZE_LOG_START -->" in readme and "<!-- SANITIZE_LOG_END -->" in readme:
-        readme = re.sub(
-            r"<!-- SANITIZE_LOG_START -->[\s\S]*?<!-- SANITIZE_LOG_END -->",
-            summary,
-            readme
-        )
-        README_PATH.write_text(readme, encoding="utf-8")
-        print("[OK] README updated with sanitize log.")
+<h3 style="color:#22c55e;">🧹 CodexDaemon Sanitize Log — {timestamp}</h3>
+
+<ul style="list-style:none; padding:0; font-size:14px;">
+  <li>✅ <strong>{num_files}</strong> Python files scanned</li>
+  <li>✅ <strong>{num_cleaned}</strong> files auto-cleaned</li>
+  <li>✅ <strong>{'No' if syntax_errors == 0 else syntax_errors}</strong> syntax errors</li>
+</ul>
+
+</div>
+{SANITIZE_END}"""
+
+def update_readme(log_block):
+    with open(README_PATH, 'r', encoding='utf-8', errors='surrogatepass') as f:
+        readme = f.read()
+
+    if SANITIZE_START in readme and SANITIZE_END in readme:
+        before = readme.split(SANITIZE_START)[0]
+        after = readme.split(SANITIZE_END)[1]
+        updated = before + log_block + after
     else:
-        print("[WARN] README markers not found — skipping README injection.")
-else:
-    print("[WARN] README.md not found.")
+        # Append at bottom if tags not found
+        updated = readme.rstrip() + "\n\n" + log_block
 
-# === FINAL SUMMARY ===
-print("\n[SUMMARY]")
-print(f"Scanned  : {len(py_files)} .py files")
-print(f"Cleaned  : {len(fixed_files)} modified")
-print(f"Errors   : {len(syntax_errors)} syntax issues")
+    with open(README_PATH, 'w', encoding='utf-8', errors='surrogatepass') as f:
+        f.write(updated)
 
+def main():
+    files = scan_python_files()
+    cleaned = 0
+    syntax_errors = 0
+
+    for file in files:
+        parsed, modified = sanitize_file(file)
+        if not parsed:
+            syntax_errors += 1
+        elif modified:
+            cleaned += 1
+
+    block = generate_sanitize_block(len(files), cleaned, syntax_errors)
+    update_readme(block)
+
+    print("[OK] README updated with sanitize log.\n")
+    print("[SUMMARY]")
+    print(f"Scanned  : {len(files)} .py files")
+    print(f"Cleaned  : {cleaned} modified")
+    print(f"Errors   : {syntax_errors} syntax issues")
+
+if __name__ == "__main__":
+    main()
