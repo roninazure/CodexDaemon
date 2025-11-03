@@ -39,7 +39,7 @@ Each commit is a potential mutation. Each scan a neurotic mirror. Each line of c
 
     updated = content.split(START)[0] + mission_block + content.split(END)[-1]
 
-    with open(README_PATH, 'w', encoding='utf-8') as f:
+    with open(readme_path, 'w', encoding='utf-8', errors='surrogatepass') as f:
         f.write(updated)
 
     print(f"✅ Codex Mission block updated at {timestamp}.")
