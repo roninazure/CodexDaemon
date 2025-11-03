@@ -18,25 +18,6 @@
 </div>
 <!-- CODEX_HTML_HEADER_END -->
 
-<!-- CODEX_MISSION_START -->
-<div align="center" style="margin-top:30px; padding:20px; border-radius:16px;
-    border:1px solid #6a0dad; box-shadow:0 0 10px #6a0dad, inset 0 0 10px #6a0dad;
-    background:#111; color:#e0e0e0; font-family:monospace;">
-
-<h3 style="color:#bb86fc;">👁️  CodexDaemon: Self-Writing AI Code Engine</h3>
-
-<p style="max-width:750px; margin:auto; font-size:14px; line-height:1.6;">
-CodexDaemon is an autonomous AI system that reads, mutates, and evolves its own codebase.<br>
-It operates in a self-healing feedback loop — scanning repos, injecting diagnostics, and activating subroutines.<br>
-Each commit is a potential mutation. Each scan a neurotic mirror. Each line of code, a neural spark.<br>
-<code>Think. Scan. Mutate. Evolve.</code>
-</p>
-
-<p style="margin-top:20px; font-size:12px; color:#888;">Last mission sync at 2025-11-02T04:51:41Z</p>
-
-</div>
-<!-- CODEX_MISSION_END -->
-
 <!--SYNC-START-->
 <div align="center" style="background:#0a0a0a;padding:20px;border-radius:16px;
     border:1px solid #0ea5e9;box-shadow:0 0 10px #0ea5e9, inset 0 0 10px #0ea5e9;">
@@ -106,33 +87,3 @@ Threat sync complete at 2025-11-02T03:10:03Z.
 
 </div>
 <!--CODEX-SCAN-END-->
-
-<!-- CODEX_MUTATION_SCORE_START -->
-<div align="center" style="margin-top:30px; padding:20px; border-radius:16px;
-    border:1px solid #f97316; box-shadow:0 0 10px #f97316, inset 0 0 10px #f97316;
-    background:#111; color:#e0e0e0; font-family:monospace;">
-
-<h3 style="color:#f97316;">🧬 CodexDaemon Mutation Risk Score</h3>
-
-<table style="width:70%; border-collapse:collapse; color:#f8f8f8; font-family:monospace;">
-<tr style="color:#f97316;">
-<th align="left">File</th>
-<th align="right">Risk Score</th>
-</tr>
-<tr><td>.github/scripts/codexdaemon_scan.py</td><td align='right'>51</td></tr>
-<tr><td>.github/scripts/update_mutation_risk.py</td><td align='right'>22</td></tr>
-<tr><td>.github/scripts/update_neural_diagnostics.py</td><td align='right'>15</td></tr>
-<tr><td>.github/scripts/inject_codex_mission.py</td><td align='right'>10</td></tr>
-<tr><td>.github/scripts/inject_codex_mission_block.py</td><td align='right'>10</td></tr>
-<tr><td>codex_runner.py</td><td align='right'>7</td></tr>
-</table>
-
-<pre style="text-align:left; color:#f0cfcf; background:#111; padding:15px;
-    border-radius:10px; border:1px solid #f97316; box-shadow:inset 0 0 6px #f97316;">
-CodexDaemon performed a self-inspection on potential mutation vectors.
-Risk is ranked by suspicious operations and volatile patterns.
-Scan timestamp: 2025-11-03T00:16:57.651133Z
-</pre>
-
-</div>
-<!-- CODEX_MUTATION_SCORE_END -->

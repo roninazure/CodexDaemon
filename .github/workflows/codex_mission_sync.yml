@@ -1,0 +1,30 @@
+name: 🧬 Codex Mission Sync
+
+on:
+  workflow_dispatch:    # Manual trigger from GitHub UI
+  schedule:
+    - cron: "0 10 * * *"  # Every day at 10:00 UTC
+
+jobs:
+  sync-mission:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout repo
+        uses: actions/checkout@v4
+
+      - name: 🐍 Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: 💉 Inject Codex Mission Timestamp
+        run: |
+          python3 .github/scripts/inject_codex_mission.py
+
+      - name: 🚀 Commit and push changes
+        run: |
+          git config --global user.name "CodexDaemon"
+          git config --global user.email "actions@github.com"
+          git add README.md
+          git commit -m "🤖 CodexMission: Timestamp auto-sync"
+          git push

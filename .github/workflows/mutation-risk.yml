@@ -1,0 +1,38 @@
+name: 🧬 CodexDaemon Mutation Risk Scan
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "10 4 * * *"  # Every day at 4:10 AM UTC
+
+jobs:
+  mutation-risk:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🧬 Checkout Repo
+        uses: actions/checkout@v3
+
+      - name: 🧪 Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: 🔧 Install Dependencies (if needed)
+        run: |
+          python3 -m venv .venv
+          source .venv/bin/activate
+          pip install --upgrade pip
+
+      - name: ⚙️ Run Mutation Risk Script
+        run: |
+          source .venv/bin/activate
+          python3 .github/scripts/update_mutation_risk.py
+
+      - name: ✅ Commit Updated README
+        run: |
+          git config --global user.name "CodexDaemon"
+          git config --global user.email "codex@daemon.com"
+          git add README.md
+          git commit -m "🧬 Update Mutation Risk Score [auto]" || echo "No changes to commit"
+          git push
