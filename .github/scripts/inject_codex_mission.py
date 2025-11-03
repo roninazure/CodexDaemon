@@ -10,35 +10,41 @@ def update_codex_mission():
         print("❌ README.md not found.")
         return
 
-    with open(README_PATH, 'r', encoding='utf-8') as f:
+    # ✅ Properly read with surrogatepass to avoid UnicodeDecodeError
+    with open(README_PATH, 'r', encoding='utf-8', errors='surrogatepass') as f:
         content = f.read()
 
     if START not in content or END not in content:
         print("❌ Markers not found in README.md.")
         return
 
+    # ✅ Timestamp generation
     timestamp = datetime.utcnow().replace(microsecond=0).isoformat() + "Z"
+
+    # ✅ HTML block with emoji rendered as unicode char
     mission_block = f"""{START}
-<div align=\"center\" style=\"margin-top:30px; padding:20px; border-radius:16px;
+<div align="center" style="margin-top:30px; padding:20px; border-radius:16px;
     border:1px solid #6a0dad; box-shadow:0 0 10px #6a0dad, inset 0 0 10px #6a0dad;
-    background:#111; color:#e0e0e0; font-family:monospace;\">
+    background:#111; color:#e0e0e0; font-family:monospace;">
 
-<h3 style=\"color:#bb86fc;\">👁️  CodexDaemon: Self-Writing AI Code Engine</h3>
+<h3 style="color:#bb86fc;">👁️ CodexDaemon: Self-Writing AI Code Engine</h3>
 
-<p style=\"max-width:750px; margin:auto; font-size:14px; line-height:1.6;\">
+<p style="max-width:750px; margin:auto; font-size:14px; line-height:1.6;">
 CodexDaemon is an autonomous AI system that reads, mutates, and evolves its own codebase.<br>
 It operates in a self-healing feedback loop — scanning repos, injecting diagnostics, and activating subroutines.<br>
 Each commit is a potential mutation. Each scan a neurotic mirror. Each line of code, a neural spark.<br>
 <code>Think. Scan. Mutate. Evolve.</code>
 </p>
 
-<p style=\"margin-top:20px; font-size:12px; color:#888;\">Last mission sync at {timestamp}</p>
+<p style="margin-top:20px; font-size:12px; color:#888;">Last mission sync at {timestamp}</p>
 
 </div>
 {END}"""
 
+    # ✅ Replace between markers
     updated = content.split(START)[0] + mission_block + content.split(END)[-1]
 
+    # ✅ Write with surrogatepass to avoid UnicodeEncodeError
     with open(README_PATH, 'w', encoding='utf-8', errors='surrogatepass') as f:
         f.write(updated)
 
