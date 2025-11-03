@@ -23,7 +23,7 @@
     border:1px solid #6a0dad; box-shadow:0 0 10px #6a0dad, inset 0 0 10px #6a0dad;
     background:#111; color:#e0e0e0; font-family:monospace;">
 
-<h3 style="color:#bb86fc;">ğŸ‘ï¸  CodexDaemon: Self-Writing AI Code Engine</h3>
+<h3 style="color:#bb86fc;">í ½í±ï¸  CodexDaemon: Self-Writing AI Code Engine</h3>
 
 <p style="max-width:750px; margin:auto; font-size:14px; line-height:1.6;">
 CodexDaemon is an autonomous AI system that reads, mutates, and evolves its own codebase.<br>
@@ -32,7 +32,7 @@ Each commit is a potential mutation. Each scan a neurotic mirror. Each line of c
 <code>Think. Scan. Mutate. Evolve.</code>
 </p>
 
-<p style="margin-top:20px; font-size:12px; color:#888;">Last mission sync at 2025-11-02T04:51:41Z</p>
+<p style="margin-top:20px; font-size:12px; color:#888;">Last mission sync at 2025-11-03T01:04:11Z</p>
 
 </div>
 <!-- CODEX_MISSION_END -->
