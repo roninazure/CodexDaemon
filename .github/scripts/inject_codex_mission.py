@@ -23,7 +23,7 @@ def update_codex_mission():
     border:1px solid #6a0dad; box-shadow:0 0 10px #6a0dad, inset 0 0 10px #6a0dad;
     background:#111; color:#e0e0e0; font-family:monospace;\">
 
-<h3 style=\"color:#bb86fc;\">\ud83d\udc41\ufe0f  CodexDaemon: Self-Writing AI Code Engine</h3>
+<h3 style=\"color:#bb86fc;\">👁️  CodexDaemon: Self-Writing AI Code Engine</h3>
 
 <p style=\"max-width:750px; margin:auto; font-size:14px; line-height:1.6;\">
 CodexDaemon is an autonomous AI system that reads, mutates, and evolves its own codebase.<br>
