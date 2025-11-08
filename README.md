@@ -1,20 +1,23 @@
-<!-- CODEX_HTML_HEADER_START -->
+<!-- DARC_HTML_HEADER_START -->
 <div align="center">
 
 <p align="center">
-  <img src="https://img.shields.io/badge/%F0%9F%A4%96%20CodexDaemon-Autonomous%20Code%20Runner-6a0dad?style=for-the-badge&labelColor=1a1a1a" alt="CodexDaemon Badge"/>
+  <img src="https://img.shields.io/badge/🛰️%20Project%20D.A.R.C.-AI%20Recon%20Detection%20System-8b5cf6?style=for-the-badge&labelColor=1a1a1a" alt="DARC Badge"/>
   <img src="https://img.shields.io/badge/OpenAI-•-black?logo=openai&logoColor=white&style=for-the-badge&labelColor=1a1a1a" alt="OpenAI Badge"/>
 </p>
 
-<h1>🧠 CodexDaemon</h1>
-<p><i>The AI-Driven Codebase That Codes Itself</i></p>
+<h1>🛰️ Project D.A.R.C.</h1>
+<p><i>The Surveillance AI That Watches You Watch It</i></p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Mode-Lab%20%7C%20CI%20%7C%20Self--Healing-0ea5e9?style=for-the-badge&labelColor=1a1a1a" alt="Modes"/>
-  <img src="https://img.shields.io/badge/Model-gpt--4o--mini-10b981?style=for-the-badge&labelColor=1a1a1a" alt="Model"/>
-  <img src="https://img.shields.io/badge/Status-Online-brightgreen?style=for-the-badge&labelColor=1a1a1a" alt="Status"/>
+  <img src="https://img.shields.io/badge/Phase-2.3%20Infra%20Memory%20Scan-0ea5e9?style=for-the-badge&labelColor=1a1a1a" alt="Phase"/>
+  <img src="https://img.shields.io/badge/Mode-Hunter%20%7C%20Threat%20Intel%20%7C%20Recon%20Feed-f97316?style=for-the-badge&labelColor=1a1a1a" alt="Mode"/>
+  <img src="https://img.shields.io/badge/Model-GPT--4o-10b981?style=for-the-badge&labelColor=1a1a1a" alt="Model"/>
+  <img src="https://img.shields.io/badge/Status-Live--Online-brightgreen?style=for-the-badge&labelColor=1a1a1a" alt="Status"/>
 </p>
 
+</div>
+<!-- DARC_HTML_HEADER_END -->
 </div>
 <!-- CODEX_HTML_HEADER_END -->
 
