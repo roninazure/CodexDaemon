@@ -37,7 +37,6 @@ jobs:
         run: |
           git clone https://x-access-token:${{ secrets.GH_PAT }}@github.com/roninazure/mad-scientist-code.git ../mad-scientist-code
           git clone https://x-access-token:${{ secrets.GH_PAT }}@github.com/roninazure/project-darc.git ../project-darc
-          git clone https://x-access-token:${{ secrets.GH_PAT }}@github.com/roninazure/priv.git ../priv
 
       - name: 🧬 Run Neural Diagnostics Scan (All Repos)
         run: |
