@@ -41,7 +41,7 @@ Each commit is a potential mutation. Each scan a neurotic mirror. Each line of c
 <div align="center" style="background:#0a0a0a;padding:20px;border-radius:16px;
     border:1px solid #0ea5e9;box-shadow:0 0 10px #0ea5e9, inset 0 0 10px #0ea5e9;">
 
-<h3 style="color:#0ea5e9;">🧩 Neural Diagnostics — 2025-11-07T04:24:01Z</h3>
+<h3 style="color:#0ea5e9;">🧩 Neural Diagnostics — 2025-11-10T17:06:12Z</h3>
 
 <table style="width:80%;border-collapse:collapse;color:#e2e2e2;font-family:monospace;">
 <tr style="color:#0ea5e9;">
@@ -50,17 +50,17 @@ Each commit is a potential mutation. Each scan a neurotic mirror. Each line of c
 <th align="right">LOC</th>
 </tr>
 <tr><td>CodexDaemon</td><td align='right'>8</td><td align='right'>748</td></tr>
-<tr><td>mad-scientist-code</td><td align='right'>3</td><td align='right'>407</td></tr>
-<tr><td>project-darc</td><td align='right'>1</td><td align='right'>148</td></tr>
+<tr><td>mad-scientist-code</td><td align='right'>3</td><td align='right'>405</td></tr>
+<tr><td>project-darc</td><td align='right'>9</td><td align='right'>447</td></tr>
 <tr><td>priv</td><td align='right'>0</td><td align='right'>0</td></tr>
 </table>
 
 <pre style="text-align:left;color:#cfcfcf;background:#111;padding:15px;
     border-radius:10px;border:1px solid #0ea5e9;box-shadow:inset 0 0 6px #0ea5e9;">
 The analysis of the four repositories reveals a modest volume of code,
-with a combined total of 1303 lines across 12 files. Each repository exhibits distinct characteristics,
+with a combined total of 1600 lines across 20 files. Each repository exhibits distinct characteristics,
 reflecting the unique intentions of their creators. The balance of complexity and simplicity is evident,
-suggesting a focused approach to development. Neural synchronization achieved at 2025-11-07T04:24:01Z.
+suggesting a focused approach to development. Neural synchronization achieved at 2025-11-10T17:06:12Z.
 </pre>
 
 </div>
@@ -70,7 +70,7 @@ suggesting a focused approach to development. Neural synchronization achieved at
 <div align="center" style="background:#1e1e1e;padding:20px;border-radius:16px;
     border:1px solid #8b0000;box-shadow:0 0 10px #ff0000, inset 0 0 10px #8b0000;">
 
-<h3 style="color:#ff4444;">☣️ CodexDaemon Threat Scan — 2025-11-03T12:59:47Z</h3>
+<h3 style="color:#ff4444;">☣️ CodexDaemon Threat Scan — 2025-11-10T17:06:11Z</h3>
 
 <table style="width:90%;border-collapse:collapse;color:#f8f8f8;font-family:monospace;">
 <tr style="color:#ff4444;">
@@ -104,8 +104,8 @@ suggesting a focused approach to development. Neural synchronization achieved at
 <tr><td>.github/scripts/sanitize_codex_repo.py</td><td align='right'>41</td><td><code>open(</code></td></tr>
 <tr><td>.github/scripts/sanitize_codex_repo.py</td><td align='right'>65</td><td><code>open(</code></td></tr>
 <tr><td>.github/scripts/inject_codex_mission.py</td><td align='right'>1</td><td><code>import os</code></td></tr>
-<tr><td>.github/scripts/inject_codex_mission.py</td><td align='right'>13</td><td><code>open(</code></td></tr>
-<tr><td>.github/scripts/inject_codex_mission.py</td><td align='right'>42</td><td><code>open(</code></td></tr>
+<tr><td>.github/scripts/inject_codex_mission.py</td><td align='right'>14</td><td><code>open(</code></td></tr>
+<tr><td>.github/scripts/inject_codex_mission.py</td><td align='right'>48</td><td><code>open(</code></td></tr>
 <tr><td>.github/scripts/update_mutation_risk.py</td><td align='right'>2</td><td><code>import os</code></td></tr>
 <tr><td>.github/scripts/update_mutation_risk.py</td><td align='right'>18</td><td><code>@codex</code></td></tr>
 <tr><td>.github/scripts/update_mutation_risk.py</td><td align='right'>26</td><td><code>open(</code></td></tr>
@@ -117,7 +117,7 @@ suggesting a focused approach to development. Neural synchronization achieved at
     border-radius:10px;border:1px solid #8b0000;box-shadow:inset 0 0 6px #8b0000;">
 33 triggers detected across 7 files.
 CodexDaemon activated neural subroutines to trace instability and emergent traits.
-Threat sync complete at 2025-11-03T12:59:47Z.
+Threat sync complete at 2025-11-10T17:06:11Z.
 </pre>
 
 </div>
