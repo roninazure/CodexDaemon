@@ -33,11 +33,13 @@ jobs:
         run: |
           python .github/scripts/codexdaemon_scan.py
 
-      - name: 🔁 Clone All Repos for Diagnostics
+      - name: 🔁 Clone All Repos for Diagnostics (Token Auth)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          git clone https://github.com/roninazure/mad-scientist-code.git ../mad-scientist-code
-          git clone https://github.com/roninazure/project-darc.git ../project-darc
-          git clone https://github.com/roninazure/priv.git ../priv
+          git clone https://x-access-token:${GH_TOKEN}@github.com/roninazure/mad-scientist-code.git ../mad-scientist-code
+          git clone https://x-access-token:${GH_TOKEN}@github.com/roninazure/project-darc.git ../project-darc
+          git clone https://x-access-token:${GH_TOKEN}@github.com/roninazure/priv.git ../priv
 
       - name: 🧬 Run Neural Diagnostics Scan (All Repos)
         run: |
