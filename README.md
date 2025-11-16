@@ -124,15 +124,30 @@ Threat sync complete at 2025-11-11T01:22:23Z.
 <!--CODEX-SCAN-END-->
 
 <!-- SANITIZE_LOG_START -->
-<h3 align="center">🧹 CodexDaemon Sanitize Log — <code>2025‑11‑03T04:10:59Z</code></h3>
 
-<div align="center">
+🧹 CodexDaemon Sanitize Log — `2025-11-16T17:30:52Z`
 
-✅ <strong>8</strong> Python files scanned  
-✅ <strong>0</strong> files auto-cleaned  
-✅ <strong>No</strong> syntax errors  
+✅ 12 Python files scanned  
+✅ 3 files auto-cleaned  
+✅ No syntax errors  
 
-</div>
+
+🍬 **CodexDaemon Mutation Risk Score**
+
+| File | Risk Score |
+|------|-------------|
+| `codex_runner.py` | 46 |
+| `roninazure/.github/scripts/update_readme_sections.py` | 46 |
+| `mad-scientist-code/.github/scripts/update_readme.redacted.py` | 43 |
+| `.github/scripts/normalize_codex_logs.py` | 34 |
+| `.github/scripts/inject_codex_mission.py` | 27 |
+| `mad-scientist-code/.github/scripts/integrate_codexdaemon.py` | 26 |
+| `mad-scientist-code/.github/scripts/update_readme.py` | 24 |
+
+CodexDaemon performed a self-inspection on potential mutation vectors.  
+Risk is ranked by suspicious operations and volatile patterns.  
+Scan timestamp: `2025-11-16T17:30:52Z`
+
 <!-- SANITIZE_LOG_END -->
 
 <!-- CODEX_MUTATION_SCORE_START -->
