@@ -132,11 +132,11 @@ Threat sync complete at 2025-11-11T01:22:23Z.
 
 <p style="font-size:14px; color:#a0a0a0;">Scan timestamp: <code>2025-11-16T17:30:52Z</code></p>
 
-<ul style="list-style-type:'✅ '; padding-left:0; font-size:14px; text-align:left; max-width:600px; margin:auto;">
-  <li>12 Python files scanned</li>
-  <li>3 files auto-cleaned</li>
-  <li>No syntax errors</li>
-</ul>
+<div style="font-size:14px; text-align:left; display:inline-block;">
+  ✅ 12 Python files scanned<br>
+  ✅ 3 files auto-cleaned<br>
+  ✅ No syntax errors
+</div>
 
 <h4 style="margin-top:20px; color:#bb86fc;">🍬 Mutation Risk Score</h4>
 
@@ -161,7 +161,6 @@ Risk is ranked by suspicious operations and volatile patterns.
 </pre>
 
 </div>
-
 <!-- SANITIZE_LOG_END -->
 
 <!-- CODEX_MUTATION_SCORE_START -->
