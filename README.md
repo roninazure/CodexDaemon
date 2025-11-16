@@ -124,29 +124,43 @@ Threat sync complete at 2025-11-11T01:22:23Z.
 <!--CODEX-SCAN-END-->
 
 <!-- SANITIZE_LOG_START -->
+<div align="center" style="background:#111; padding:20px; border-radius:16px;
+    border:1px solid #7c3aed; box-shadow:0 0 10px #7c3aed, inset 0 0 10px #7c3aed;
+    color:#e0e0e0; font-family:monospace; margin-top:30px;">
 
-🧹 CodexDaemon Sanitize Log — `2025-11-16T17:30:52Z`
+<h3 style="color:#bb86fc;">🧹 CodexDaemon Sanitize Log</h3>
 
-✅ 12 Python files scanned  
-✅ 3 files auto-cleaned  
-✅ No syntax errors  
+<p style="font-size:14px; color:#a0a0a0;">Scan timestamp: <code>2025-11-16T17:30:52Z</code></p>
 
+<ul style="list-style-type:'✅ '; padding-left:0; font-size:14px; text-align:left; max-width:600px; margin:auto;">
+  <li>12 Python files scanned</li>
+  <li>3 files auto-cleaned</li>
+  <li>No syntax errors</li>
+</ul>
 
-🍬 **CodexDaemon Mutation Risk Score**
+<h4 style="margin-top:20px; color:#bb86fc;">🍬 Mutation Risk Score</h4>
 
-| File | Risk Score |
-|------|-------------|
-| `codex_runner.py` | 46 |
-| `roninazure/.github/scripts/update_readme_sections.py` | 46 |
-| `mad-scientist-code/.github/scripts/update_readme.redacted.py` | 43 |
-| `.github/scripts/normalize_codex_logs.py` | 34 |
-| `.github/scripts/inject_codex_mission.py` | 27 |
-| `mad-scientist-code/.github/scripts/integrate_codexdaemon.py` | 26 |
-| `mad-scientist-code/.github/scripts/update_readme.py` | 24 |
+<table style="width:70%; border-collapse:collapse; color:#f8f8f8; font-family:monospace;">
+<tr style="color:#bb86fc;">
+<th align="left">File</th>
+<th align="right">Risk Score</th>
+</tr>
+<tr><td>codex_runner.py</td><td align='right'>46</td></tr>
+<tr><td>roninazure/.github/scripts/update_readme_sections.py</td><td align='right'>46</td></tr>
+<tr><td>mad-scientist-code/.github/scripts/update_readme.redacted.py</td><td align='right'>43</td></tr>
+<tr><td>.github/scripts/normalize_codex_logs.py</td><td align='right'>34</td></tr>
+<tr><td>.github/scripts/inject_codex_mission.py</td><td align='right'>27</td></tr>
+<tr><td>mad-scientist-code/.github/scripts/integrate_codexdaemon.py</td><td align='right'>26</td></tr>
+<tr><td>mad-scientist-code/.github/scripts/update_readme.py</td><td align='right'>24</td></tr>
+</table>
 
-CodexDaemon performed a self-inspection on potential mutation vectors.  
-Risk is ranked by suspicious operations and volatile patterns.  
-Scan timestamp: `2025-11-16T17:30:52Z`
+<pre style="text-align:left; color:#cfcfcf; background:#111; padding:15px;
+    border-radius:10px; border:1px solid #7c3aed; box-shadow:inset 0 0 6px #7c3aed; margin-top:20px;">
+CodexDaemon performed a self-inspection on potential mutation vectors.
+Risk is ranked by suspicious operations and volatile patterns.
+</pre>
+
+</div>
 
 <!-- SANITIZE_LOG_END -->
 
