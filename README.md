@@ -66,9 +66,12 @@
 
 <div align="center">
   <img src="https://raw.githubusercontent.com/roninazure/mad-scientist/main/public/qr-codex.png" width="160" />
-  <p><sub>CodexDaemon v1.9 · Autonomous Mode · README vMut.2025.12.22</sub></p>
+  <p><sub>CodexDaemon v1.9 · Autonomous Mode · README vMut.2025.12.23</sub></p>
 </div>
 
+---
+
+<!-- SANITIZE_LOG_START -->
 <h4 style="margin-top:20px; color:#bb86fc;">🍬 Mutation Risk Score</h4>
 
 <table style="width:70%; border-collapse:collapse; color:#f8f8f8; font-family:monospace;">
@@ -90,6 +93,7 @@
 CodexDaemon performed a self-inspection on potential mutation vectors.
 Risk is ranked by suspicious operations and volatile patterns.
 </pre>
+<!-- SANITIZE_LOG_END -->
 
 <!-- CODEX_MUTATION_SCORE_START -->
 <div align="center" style="margin-top:30px; padding:20px; border-radius:16px;
@@ -123,4 +127,3 @@ Scan timestamp: 2025-12-23T04:47:36.152141Z
 <!-- CODEX_MUTATION_SCORE_END -->
 
 <!-- END: PHASE-1 AGENTIC README -->
-
