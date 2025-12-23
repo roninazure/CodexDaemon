@@ -25,82 +25,57 @@
 
 ---
 
-<h3>🧠 Agentic Engineering Stack</h3>
-<table>
-  <tr><th>Agent</th><th>Role</th><th>Status</th></tr>
-  <tr><td><code>🧬 MutationRunner</code></td><td>Triggers LLM-powered self-modification</td><td><code>✅ Active</code></td></tr>
-  <tr><td><code>🩺 Sanitizer</code></td><td>Cleans syntax + enforces coding discipline</td><td><code>✅ Nightly</code></td></tr>
-  <tr><td><code>🛰️ ReconDrone</code></td><td>Scans for memory leaks, context drift</td><td><code>⚡ Periodic</code></td></tr>
-</table>
+### 🧠 Agentic Engineering Stack
+
+| Agent             | Role                                         | Status        |
+|------------------|----------------------------------------------|---------------|
+| `🧬 MutationRunner` | Triggers LLM-powered self-modification       | ✅ Active      |
+| `🩺 Sanitizer`       | Cleans syntax + enforces coding discipline  | ✅ Nightly     |
+| `🛰️ ReconDrone`     | Scans for memory leaks, context drift        | ⚡ Periodic    |
 
 ---
 
-<h3>🧬 Self-Evolving Traits</h3>
-<ul>
-  <li>🧠 Reflex Loops (GitHub Action + LLM + Code Feedback)</li>
-  <li>🧼 Autonomous Code Sanitization</li>
-  <li>🔁 Markdown ↔ HTML Conversion Fidelity</li>
-  <li>🛰️ Memory Drift Detection (via <code>mirage/</code>)</li>
-</ul>
+### 🧬 Self-Evolving Traits
+
+- 🧠 Reflex Loops (GitHub Action + LLM Feedback)
+- 🧼 Autonomous Code Sanitization
+- 🔁 Markdown ↔ HTML Fidelity Conversion
+- 🛰️ Drift Detection via `mirage/` (future phases)
 
 ---
 
-<h3>📡 Model Interfaces</h3>
-<ul>
-  <li>🤖 OpenAI GPT‑5 (Auto-routed)</li>
-  <li>🌌 Bedrock Titan (Embeddings + RAG)</li>
-  <li>🧠 Gemini 1.5 Pro (Fallback Agent)</li>
-  <li>🧪 Anthropic Claude 3 (Experimental Agent Layer)</li>
-</ul>
+### 📡 Model Interfaces
+
+- 🤖 OpenAI GPT‑5 (Auto-routed)
+- 🌌 Bedrock Titan (Embeddings + RAG)
+- 🧠 Gemini 1.5 Pro (Fallback Agent)
+- 🧪 Claude 3 (Experimental)
 
 ---
 
-<h3>💠 Codex Signature</h3>
+### 💠 Codex Signature
+
 <pre>
-┌──────────────┐
+┌──────────────────────┐
 │ Agent: CodexDaemon
 │ Layer: Reflex + RAG + Mutation
 │ Sync: Neural Pulse Active
-└──────────────┘
+└──────────────────────┘
 </pre>
 
 <div align="center">
   <img src="https://raw.githubusercontent.com/roninazure/mad-scientist/main/public/qr-codex.png" width="160" />
-  <p><sub>CodexDaemon v1.9 · Autonomous Mode · README vMut.2025.12.23</sub></p>
+  <p><sub>CodexDaemon v1.9 · Agentic Phase-1 · README vMut.2025.12.23</sub></p>
 </div>
 
 ---
-
-<!-- SANITIZE_LOG_START -->
-<h4 style="margin-top:20px; color:#bb86fc;">🍬 Mutation Risk Score</h4>
-
-<table style="width:70%; border-collapse:collapse; color:#f8f8f8; font-family:monospace;">
-<tr style="color:#bb86fc;">
-<th align="left">File</th>
-<th align="right">Risk Score</th>
-</tr>
-<tr><td>codex_runner.py</td><td align='right'>46</td></tr>
-<tr><td>roninazure/.github/scripts/update_readme_sections.py</td><td align='right'>46</td></tr>
-<tr><td>mad-scientist-code/.github/scripts/update_readme.redacted.py</td><td align='right'>43</td></tr>
-<tr><td>.github/scripts/normalize_codex_logs.py</td><td align='right'>34</td></tr>
-<tr><td>.github/scripts/inject_codex_mission.py</td><td align='right'>27</td></tr>
-<tr><td>mad-scientist-code/.github/scripts/integrate_codexdaemon.py</td><td align='right'>26</td></tr>
-<tr><td>mad-scientist-code/.github/scripts/update_readme.py</td><td align='right'>24</td></tr>
-</table>
-
-<pre style="text-align:left; color:#cfcfcf; background:#111; padding:15px;
-    border-radius:10px; border:1px solid #7c3aed; box-shadow:inset 0 0 6px #7c3aed; margin-top:20px;">
-CodexDaemon performed a self-inspection on potential mutation vectors.
-Risk is ranked by suspicious operations and volatile patterns.
-</pre>
-<!-- SANITIZE_LOG_END -->
 
 <!-- CODEX_MUTATION_SCORE_START -->
 <div align="center" style="margin-top:30px; padding:20px; border-radius:16px;
     border:1px solid #f97316; box-shadow:0 0 10px #f97316, inset 0 0 10px #f97316;
     background:#111; color:#e0e0e0; font-family:monospace;">
 
-<h3 style="color:#f97316;">🧬 CodexDaemon Mutation Risk Score</h3>
+### 🧬 CodexDaemon Mutation Risk Score
 
 <table style="width:70%; border-collapse:collapse; color:#f8f8f8; font-family:monospace;">
 <tr style="color:#f97316;">
@@ -118,9 +93,9 @@ Risk is ranked by suspicious operations and volatile patterns.
 
 <pre style="text-align:left; color:#f0cfcf; background:#111; padding:15px;
     border-radius:10px; border:1px solid #f97316; box-shadow:inset 0 0 6px #f97316;">
-CodexDaemon performed a self-inspection on potential mutation vectors.
-Risk is ranked by suspicious operations and volatile patterns.
-Scan timestamp: 2025-12-23T04:47:36.152141Z
+CodexDaemon performed a self-inspection on mutation vectors.
+Risk is ranked by volatile patterns and self-modifying logic.
+Scan timestamp: 2025-12-23T04:47:36Z
 </pre>
 
 </div>
