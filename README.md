@@ -63,10 +63,9 @@
 └──────────────────────┘
 </pre>
 
-<div align="center">
-  <img src="https://raw.githubusercontent.com/roninazure/mad-scientist/main/public/qr-codex.png" width="160" />
-  <p><sub>CodexDaemon v1.9 · Agentic Phase-1 · README vMut.2025.12.23</sub></p>
-</div>
+<p align="center">
+  <sub><strong>CodexDaemon v1.9</strong> · Agentic Phase‑1 · README vMut.2025.12.23</sub>
+</p>
 
 ---
 
