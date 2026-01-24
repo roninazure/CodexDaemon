@@ -53,6 +53,67 @@ mix-blend-mode:overlay;
 z-index:9999;
 }
 
+
+/* ================================
+   HERO CARD HARD FIX (NO OVERLAP)
+   ================================ */
+
+/* Contain absolutely positioned children */
+.hero-card {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Scope badges to image only */
+.hero-card-image {
+  position: relative;
+  flex-shrink: 0;
+}
+
+/* Floating badges */
+.hero-badge {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  z-index: 2;
+}
+
+/* Create safe buffer between content and stats */
+.hero-content {
+  padding-bottom: 2.5rem;
+}
+
+/* Lock stats into their own zone */
+.hero-stats {
+  position: relative;
+  z-index: 1;
+  margin-top: 2rem;
+}
+
+/* Prevent stat overflow */
+.hero-stat {
+  min-width: 0;
+  overflow-wrap: break-word;
+}
+
+/* Mobile safety */
+@media (max-width: 768px) {
+  .hero-stats {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .hero-stat-number {
+    font-size: 1.6rem;
+  }
+
+  .hero-badge {
+    display: none;
+  }
+}
+
 </style>
 </head>
 <body>
