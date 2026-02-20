@@ -87,8 +87,8 @@
 <tr><td>.github/scripts/sanitize_codex_repo.py</td><td align='right'>25</td></tr>
 <tr><td>.github/scripts/update_mutation_risk.py</td><td align='right'>22</td></tr>
 <tr><td>.github/scripts/update_neural_diagnostics.py</td><td align='right'>15</td></tr>
-<tr><td>.github/scripts/inject_codex_mission.py</td><td align='right'>10</td></tr>
 <tr><td>.github/scripts/inject_codex_mission_block.py</td><td align='right'>10</td></tr>
+<tr><td>.github/scripts/inject_codex_mission.py</td><td align='right'>10</td></tr>
 <tr><td>codex_runner.py</td><td align='right'>7</td></tr>
 </table>
 
@@ -96,7 +96,7 @@
     border-radius:10px; border:1px solid #f97316; box-shadow:inset 0 0 6px #f97316;">
 CodexDaemon performed a self-inspection on potential mutation vectors.
 Risk is ranked by suspicious operations and volatile patterns.
-Scan timestamp: 2026-02-19T05:35:36.349497Z
+Scan timestamp: 2026-02-20T05:21:01.889287Z
 </pre>
 
 </div>
